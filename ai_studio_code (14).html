@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>Obsidian 交易策略</title>
+    
+    <!-- 图标 -->
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect x='0' y='0' width='64' height='64' rx='16' fill='%237d60f2'/%3E%3Cpath d='M18 34 L28 44 L46 20' stroke='white' stroke-width='8' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E" type="image/svg+xml">
+
+    <style>
+        :root {
+            /* Obsidian 核心配色 */
+            --bg-color: #1e1e1e;       
+            --card-bg: #2b2b2b;        
+            --card-border: #383838;    
+            --text-main: #dcddde;      
+            --line-color: #5c5c5c;     
+            
+            /* Obsidian 紫色 */
+            --accent-purple: #7d60f2;  
+            --accent-glow: rgba(125, 96, 242, 0.4);
+            
+            --line-width: 2px;
+        }
+
+        /* -------------- 修改重点区域开始 -------------- */
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            
+            display: flex;
+            /* 改为 flex-start，让内容靠左对齐 */
+            justify-content: flex-start; 
+            /* 保持垂直居中，如果想让它靠顶部，把下面这行改成 align-items: flex-start; */
+            align-items: center;         
+            
+            min-height: 100vh;
+            margin: 0;
+            
+            /* 增加左侧内边距，让它不要贴着屏幕边缘 */
+            padding-left: 100px;
+            padding-right: 40px;
+            padding-top: 40px;
+            padding-bottom: 40px;
+
+            overflow: auto; /* 允许滚动，防止内容显示不全 */
+        }
+
+        /* 隐藏滚动条（Chrome/Safari/Edge） */
+        body::-webkit-scrollbar {
+            display: none;
+        }
+
+        /* 隐藏滚动条（Firefox/IE） */
+        body {
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+        }
+        /* -------------- 修改重点区域结束 -------------- */
+
+        /* ---------------- 布局结构 ---------------- */
+        .tree { display: flex; align-items: center; }
+        .node-group { display: flex; flex-direction: column; justify-content: center; padding-left: 50px; position: relative; }
+        .node-row { display: flex; align-items: center; position: relative; padding: 14px 0; transition: all 0.3s ease; }
+
+        /* ---------------- 连线系统 ---------------- */
+        
+        /* 1. 水平连线 */
+        .node-row::before {
+            content: ''; position: absolute; left: -50px; top: 50%; width: 50px; height: var(--line-width);
+            background-color: var(--line-color); transform: translateY(-50%); z-index: 0;
+        }
+
+        /* 根节点去线 */
+        #root-node::before {
+            display: none !important;
+            content: none !important;
+            width: 0 !important;
+        }
+        
+        /* 2. 垂直连线 */
+        .node-group > .node-row::after {
+            content: ''; position: absolute; left: -50px; width: var(--line-width); height: 100%;
+            background-color: var(--line-color); top: 0;
+        }
+
+        /* 圆角处理 */
+        .node-group > .node-row:first-child::after {
+            top: 50%; height: 50%; border-top-left-radius: 6px; background: transparent;
+            border-left: var(--line-width) solid var(--line-color);
+            border-top: var(--line-width) solid var(--line-color);
+            width: 50px; left: -50px;
+        }
+        .node-group > .node-row:first-child::before { display: none; }
+
+        .node-group > .node-row:last-child::after {
+            top: 0; height: 50%; border-bottom-left-radius: 6px; background: transparent;
+            border-left: var(--line-width) solid var(--line-color);
+            border-bottom: var(--line-width) solid var(--line-color);
+            width: 50px; left: -50px;
+        }
+        .node-group > .node-row:last-child::before { display: none; }
+
+        .node-group > .node-row:not(:first-child):not(:last-child)::after {
+            background-color: var(--line-color); width: var(--line-width); left: -50px; top: 0; height: 100%; border: none;
+        }
+
+        /* 专注模式直线 */
+        .node-row.single-mode::after { display: none !important; }
+        .node-row.single-mode::before {
+            display: block !important; width: 50px !important; left: -50px !important; border-radius: 0 !important;
+            background-color: var(--line-color) !important; height: var(--line-width) !important; top: 50% !important;
+        }
+
+        .node-group > .node-row:only-child::after { display: none; }
+        .node-group > .node-row:only-child::before { display: block !important; left: -50px; width: 50px; }
+        
+        /* 箭头 */
+        .node-group .content-box::before {
+            content: ''; position: absolute; left: -10px; top: 50%; transform: translateY(-50%);
+            width: 0; height: 0;
+            border-top: 6px solid transparent; border-bottom: 6px solid transparent;
+            border-left: 10px solid var(--line-color);
+        }
+
+        /* ---------------- 卡片样式 ---------------- */
+        .content-box {
+            background: var(--card-bg);
+            padding: 10px 24px;
+            border-radius: 6px; 
+            border: 1px solid var(--card-border);
+            font-size: 15px;
+            color: var(--text-main);
+            font-weight: 500;
+            position: relative;
+            z-index: 2;
+            min-width: 80px;
+            text-align: center;
+            display: flex; flex-direction: column; align-items: center;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        }
+        
+        .content-box:hover {
+            border-color: #666;
+            background: #333;
+        }
+
+        /* 理由标签 */
+        .reason-tag {
+            font-size: 12px;
+            color: #bfaaff; 
+            background: rgba(125, 96, 242, 0.15); 
+            padding: 3px 8px;
+            border-radius: 12px;
+            margin-top: 8px;
+            display: none;
+            font-family: 'JetBrains Mono', monospace; 
+            border: 1px solid rgba(125, 96, 242, 0.3);
+        }
+
+        /* ---------------- 紫色勾号 ---------------- */
+        .check-btn {
+            width: 28px; height: 28px;
+            background: var(--bg-color);
+            border: 2px solid #555;
+            border-radius: 6px; 
+            margin-left: 15px;
+            cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: bold; font-size: 16px; color: transparent;
+            transition: all 0.2s;
+            z-index: 5; flex-shrink: 0;
+        }
+
+        .check-btn:hover {
+            border-color: #888;
+            background: #2a2a2a;
+        }
+
+        .check-btn.active {
+            background-color: var(--accent-purple);
+            border-color: var(--accent-purple);
+            color: #fff; 
+            box-shadow: 0 0 10px var(--accent-glow);
+        }
+
+        .static-check {
+            width: 28px; height: 28px;
+            background: #332a4a;
+            border: 1px solid #5a4a85;
+            border-radius: 6px;
+            color: #bfaaff;
+            display: flex; align-items: center; justify-content: center;
+            margin-left: 15px; cursor: not-allowed;
+            font-size: 14px;
+        }
+
+        /* ---------------- 功能逻辑 ---------------- */
+        .children-wrapper { display: none; }
+        .node-row.hidden-sibling { display: none; }
+
+        .has-children::after {
+            content: ''; position: absolute; right: -25px; top: 50%; width: 25px;
+            height: var(--line-width); background-color: var(--line-color);
+            z-index: 0; transform: translateY(-50%);
+        }
+        
+    </style>
+</head>
+<body>
+
+    <div class="tree">
+        <div class="node-row has-children" id="root-node">
+            <div class="content-box">保护本金</div>
+            <div class="check-btn" onclick="toggleNode(this, false)">✔</div>
+            
+            <div class="children-wrapper">
+                <div class="node-group">
+                    
+                    <!-- 震荡 -->
+                    <div class="node-row">
+                        <div class="content-box">
+                            震荡
+                            <div class="reason-tag" id="r-zhendang"></div>
+                        </div>
+                        <div class="check-btn" onclick="toggleNode(this, true, 'r-zhendang')">✔</div>
+                        
+                        <div class="children-wrapper">
+                            <div class="node-group">
+                                <div class="node-row"><div class="content-box">牛旗做多 - OB 平仓</div><div class="static-check">✔</div></div>
+                                <div class="node-row"><div class="content-box">熊旗做空 - OB 平仓</div><div class="static-check">✔</div></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 趋势 -->
+                    <div class="node-row">
+                        <div class="content-box">趋势</div>
+                        <div class="check-btn" onclick="toggleNode(this, false)">✔</div>
+
+                        <div class="children-wrapper">
+                            <div class="node-group">
+                                
+                                <!-- 上涨 -->
+                                <div class="node-row">
+                                    <div class="content-box">
+                                        上涨
+                                        <div class="reason-tag" id="r-up"></div>
+                                    </div>
+                                    <div class="check-btn" onclick="toggleNode(this, true, 'r-up')">✔</div>
+
+                                    <div class="children-wrapper">
+                                        <div class="node-group">
+                                            <div class="node-row"><div class="content-box">牛旗上破做多</div><div class="static-check">✔</div></div>
+                                            <div class="node-row"><div class="content-box">熊旗上破做多</div><div class="static-check">✔</div></div>
+                                            <div class="node-row"><div class="content-box">底逆 做多</div><div class="static-check">✔</div></div>
+                                            <div class="node-row"><div class="content-box">底转 做多</div><div class="static-check">✔</div></div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- 下跌 -->
+                                <div class="node-row">
+                                    <div class="content-box">
+                                        下跌
+                                        <div class="reason-tag" id="r-down"></div>
+                                    </div>
+                                    <div class="check-btn" onclick="toggleNode(this, true, 'r-down')">✔</div>
+
+                                    <div class="children-wrapper">
+                                        <div class="node-group">
+                                            <div class="node-row"><div class="content-box">牛旗下破做空</div><div class="static-check">✔</div></div>
+                                            <div class="node-row"><div class="content-box">熊旗下破做空</div><div class="static-check">✔</div></div>
+                                            <div class="node-row"><div class="content-box">顶逆 做空</div><div class="static-check">✔</div></div>
+                                            <div class="node-row"><div class="content-box">顶转 做空</div><div class="static-check">✔</div></div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function toggleNode(btn, needReason, reasonTagId) {
+            let currentRow = btn.closest('.node-row');
+            let parentGroup = currentRow.closest('.node-group');
+
+            // --- Reset ---
+            if (btn.classList.contains('active')) {
+                resetSelection(currentRow, parentGroup);
+                return;
+            }
+
+            // --- Prompt ---
+            if (needReason) {
+                let reason = prompt("请输入判断理由 (例如：顶逆、底逆、牛旗、熊旗)：");
+                
+                if (reason === null || reason.trim() === "") return;
+                
+                if (reasonTagId) {
+                    let tag = document.getElementById(reasonTagId);
+                    if(tag) {
+                        tag.innerText = "# " + reason;
+                        tag.style.display = "block";
+                    }
+                }
+            }
+
+            // --- Activate ---
+            btn.classList.add('active');
+            currentRow.classList.add('has-children');
+            currentRow.classList.add('single-mode'); 
+
+            // --- Expand ---
+            let nextWrapper = currentRow.querySelector('.children-wrapper');
+            if (nextWrapper) nextWrapper.style.display = 'block';
+
+            // --- Focus ---
+            if (parentGroup) {
+                let siblings = parentGroup.children;
+                for (let sibling of siblings) {
+                    if (sibling !== currentRow) {
+                        sibling.classList.add('hidden-sibling');
+                    }
+                }
+            }
+        }
+
+        function resetSelection(currentRow, parentGroup) {
+            let btn = currentRow.querySelector('.check-btn');
+            let reasonTag = currentRow.querySelector('.reason-tag');
+            let nextWrapper = currentRow.querySelector('.children-wrapper');
+
+            btn.classList.remove('active');
+            currentRow.classList.remove('has-children');
+            currentRow.classList.remove('single-mode');
+
+            if (reasonTag) reasonTag.style.display = 'none';
+
+            if (nextWrapper) {
+                nextWrapper.style.display = 'none';
+                let activeChildren = nextWrapper.querySelectorAll('.check-btn.active');
+                activeChildren.forEach(childBtn => {
+                    childBtn.classList.remove('active');
+                    let row = childBtn.closest('.node-row');
+                    row.classList.remove('has-children');
+                    row.classList.remove('single-mode');
+                    if(row.querySelector('.reason-tag')) row.querySelector('.reason-tag').style.display = 'none';
+                    if(row.querySelector('.children-wrapper')) row.querySelector('.children-wrapper').style.display = 'none';
+                });
+            }
+
+            if (parentGroup) {
+                let siblings = parentGroup.children;
+                for (let sibling of siblings) {
+                    sibling.classList.remove('hidden-sibling');
+                }
+            }
+        }
+    </script>
+</body>
+</html>
