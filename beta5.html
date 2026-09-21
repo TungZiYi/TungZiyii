@@ -18,90 +18,77 @@
 
     <style>
         :root {
-            --bg-color: #1a1a1a;       
-            --card-bg: #252525;        
-            --card-border: #333;    
-            --text-main: #e0e0e0;      
-            --line-color: #555;     
-            --accent-purple: #7d60f2;  
-            --accent-glow: rgba(125, 96, 242, 0.45);
+            --bg-color: #0c0c0e;
+            --card-bg: rgba(255, 255, 255, 0.07);
+            --card-border: rgba(255, 255, 255, 0.1);
+            --text-main: #f5f5f7;
+            --line-color: rgba(255, 255, 255, 0.18);
+            --accent: #0a84ff;
+            --accent-glow: rgba(10, 132, 255, 0.35);
             
-            --float-bg: #1e1e1e; 
-            --float-border: 1px solid #383838; 
-            --float-shadow: none; 
+            --float-bg: rgba(30, 30, 32, 0.75);
+            --float-border: 1px solid rgba(255, 255, 255, 0.1);
+            --float-shadow: 0 12px 40px rgba(0,0,0,0.45);
             
-            --float-text-idle: #888;
-            --float-text-selected: #fff;
-            --float-text-shadow: none; 
+            --float-text-idle: #98989d;
+            --float-text-selected: #f5f5f7;
             --float-item-hover: rgba(255, 255, 255, 0.06);
 
-            --card-shadow: 0 4px 12px rgba(0,0,0,0.4);
-            --card-hover-border: #666;
-            --card-hover-bg: #2e2e2e;
-            --btn-bg: #1e1e1e;
-            --btn-border: #444;
-            --btn-hover-border: #777;
-            --btn-hover-bg: #2a2a2a;
-            --line-width: 2px;
+            --card-shadow: 0 4px 24px rgba(0,0,0,0.25);
+            --btn-bg: rgba(255, 255, 255, 0.08);
+            --btn-border: rgba(255, 255, 255, 0.12);
+            --btn-hover-bg: rgba(255, 255, 255, 0.14);
+            --line-width: 1.5px;
 
-            --switch-bg: #3a3a3a;
-            --switch-border: #3a3a3a; 
+            --switch-bg: rgba(255, 255, 255, 0.12);
             --switch-thumb: #fff;
-            --switch-icon: #ccc;
+            --switch-icon: #f5f5f7;
 
-            --modal-overlay: rgba(0, 0, 0, 0.75); 
-            --modal-bg: #1e1e1e; 
-            --modal-border: #383838; 
-            --modal-shadow: 0 16px 40px rgba(0,0,0,0.6); 
+            --modal-overlay: rgba(0, 0, 0, 0.55);
+            --modal-bg: rgba(30, 30, 32, 0.8);
+            --modal-border: rgba(255, 255, 255, 0.1);
+            --modal-shadow: 0 24px 60px rgba(0,0,0,0.5);
             
-            --modal-input-bg: transparent; 
-            --modal-input-text: #fff;
-            --modal-input-placeholder: #71767b;
-
-            --modal-btn-confirm-bg: #fff; 
-            --modal-btn-confirm-text: #000;
+            --modal-input-text: #f5f5f7;
+            --modal-input-placeholder: #98989d;
+            --modal-btn-confirm-bg: #0a84ff;
+            --modal-btn-confirm-text: #fff;
         }
 
         html.light-mode {
-            --bg-color: #f5f5f7;       
-            --card-bg: #ffffff;        
-            --card-border: #e5e5e5;    
-            --text-main: #1d1d1f;      
-            --line-color: #c7c7cc;     
-            --accent-purple: #7d60f2; 
-            --accent-glow: rgba(125, 96, 242, 0.25);
+            --bg-color: #f2f2f7;
+            --card-bg: rgba(255, 255, 255, 0.78);
+            --card-border: rgba(0, 0, 0, 0.06);
+            --text-main: #1d1d1f;
+            --line-color: rgba(0, 0, 0, 0.12);
+            --accent: #007aff;
+            --accent-glow: rgba(0, 122, 255, 0.25);
             
-            --float-bg: #ffffff; 
-            --float-border: 1px solid #e5e5e5;
-            --float-shadow: 0 8px 24px rgba(0,0,0,0.08); 
-            --float-text-idle: #8e8e93; 
-            --float-text-selected: #1d1d1f; 
-            --float-text-shadow: none; 
+            --float-bg: rgba(255, 255, 255, 0.82);
+            --float-border: 1px solid rgba(0, 0, 0, 0.06);
+            --float-shadow: 0 12px 40px rgba(0,0,0,0.08);
+            
+            --float-text-idle: #8e8e93;
+            --float-text-selected: #1d1d1f;
             --float-item-hover: rgba(0, 0, 0, 0.04);
 
-            --card-shadow: 0 2px 8px rgba(0,0,0,0.04); 
-            --card-hover-border: #d1d1d6;
-            --card-hover-bg: #fafafa;
-            --btn-bg: #fff;
-            --btn-border: #d1d1d6;
-            --btn-hover-border: #a1a1a6;
-            --btn-hover-bg: #f5f5f7;
+            --card-shadow: 0 4px 20px rgba(0,0,0,0.04);
+            --btn-bg: rgba(255, 255, 255, 0.9);
+            --btn-border: rgba(0, 0, 0, 0.08);
+            --btn-hover-bg: #fff;
 
-            --switch-bg: transparent;
-            --switch-border: rgba(0, 0, 0, 0.1); 
+            --switch-bg: rgba(0, 0, 0, 0.06);
             --switch-thumb: #fff;
-            --switch-icon: #636366;
+            --switch-icon: #1d1d1f;
 
-            --modal-overlay: rgba(0, 0, 0, 0.4);
-            --modal-bg: #ffffff;
-            --modal-border: transparent;
-            --modal-shadow: 0 16px 40px rgba(0,0,0,0.12); 
+            --modal-overlay: rgba(0, 0, 0, 0.3);
+            --modal-bg: rgba(255, 255, 255, 0.85);
+            --modal-border: rgba(0, 0, 0, 0.06);
+            --modal-shadow: 0 24px 60px rgba(0,0,0,0.12);
             
-            --modal-input-bg: transparent;
             --modal-input-text: #1d1d1f;
             --modal-input-placeholder: #8e8e93;
-
-            --modal-btn-confirm-bg: #1d1d1f;
+            --modal-btn-confirm-bg: #007aff;
             --modal-btn-confirm-text: #fff;
         }
 
@@ -110,326 +97,464 @@
         html { overflow: hidden; height: 100%; }
 
         body {
-            font-family: "SF Pro Text", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", sans-serif;
             background-color: var(--bg-color);
             color: var(--text-main);
-            display: flex; justify-content: flex-start; align-items: center;         
-            height: 100%; margin: 0;
-            padding: 40px 40px 40px 80px;
-            box-sizing: border-box; overflow: auto; 
-            transition: background-color 0.3s ease, color 0.3s ease;
-            user-select: none; -webkit-user-select: none;
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            height: 100%;
+            margin: 0;
+            padding: 48px 48px 48px 90px;
+            box-sizing: border-box;
+            overflow: auto;
+            transition: background-color 0.35s ease, color 0.35s ease;
+            user-select: none;
+            -webkit-user-select: none;
+            -webkit-font-smoothing: antialiased;
         }
 
-        /* Tree Layout */
+        /* Tree */
         .tree { display: flex; align-items: center; }
-        .node-group { display: flex; flex-direction: column; justify-content: center; padding-left: 48px; position: relative; }
-        .node-row { display: flex; align-items: center; position: relative; padding: 10px 0; transition: all 0.3s ease; }
+        .node-group {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding-left: 52px;
+            position: relative;
+        }
+        .node-row {
+            display: flex;
+            align-items: center;
+            position: relative;
+            padding: 12px 0;
+            transition: all 0.3s ease;
+        }
 
-        .node-row::before { content: ''; position: absolute; left: -48px; top: 50%; width: 48px; height: var(--line-width); background-color: var(--line-color); transform: translateY(-50%); z-index: 0; transition: background-color 0.3s ease; }
-        #root-node::before { display: none !important; content: none !important; }
-        .node-group > .node-row::after { content: ''; position: absolute; left: -48px; width: var(--line-width); height: 100%; background-color: var(--line-color); top: 0; transition: background-color 0.3s ease; }
-        .node-group > .node-row:first-child::after { top: 50%; height: 50%; border-top-left-radius: 8px; background: transparent; border-left: var(--line-width) solid var(--line-color); border-top: var(--line-width) solid var(--line-color); width: 48px; left: -48px; }
+        .node-row::before {
+            content: '';
+            position: absolute;
+            left: -52px;
+            top: 50%;
+            width: 52px;
+            height: var(--line-width);
+            background-color: var(--line-color);
+            transform: translateY(-50%);
+            z-index: 0;
+        }
+        #root-node::before { display: none !important; }
+
+        .node-group > .node-row::after {
+            content: '';
+            position: absolute;
+            left: -52px;
+            width: var(--line-width);
+            height: 100%;
+            background-color: var(--line-color);
+            top: 0;
+        }
+        .node-group > .node-row:first-child::after {
+            top: 50%;
+            height: 50%;
+            border-top-left-radius: 10px;
+            background: transparent;
+            border-left: var(--line-width) solid var(--line-color);
+            border-top: var(--line-width) solid var(--line-color);
+            width: 52px;
+            left: -52px;
+        }
         .node-group > .node-row:first-child::before { display: none; }
-        .node-group > .node-row:last-child::after { top: 0; height: 50%; border-bottom-left-radius: 8px; background: transparent; border-left: var(--line-width) solid var(--line-color); border-bottom: var(--line-width) solid var(--line-color); width: 48px; left: -48px; }
+        .node-group > .node-row:last-child::after {
+            top: 0;
+            height: 50%;
+            border-bottom-left-radius: 10px;
+            background: transparent;
+            border-left: var(--line-width) solid var(--line-color);
+            border-bottom: var(--line-width) solid var(--line-color);
+            width: 52px;
+            left: -52px;
+        }
         .node-group > .node-row:last-child::before { display: none; }
-        .node-group > .node-row:not(:first-child):not(:last-child)::after { background-color: var(--line-color); width: var(--line-width); left: -48px; top: 0; height: 100%; border: none; }
+        .node-group > .node-row:not(:first-child):not(:last-child)::after {
+            background-color: var(--line-color);
+            width: var(--line-width);
+            left: -52px;
+            top: 0;
+            height: 100%;
+            border: none;
+        }
 
-        /* Focus Mode */
         .node-row.single-mode::after { display: none !important; }
-        .node-row.single-mode::before { display: block !important; width: 48px !important; left: -48px !important; border-radius: 0 !important; background-color: var(--line-color) !important; height: var(--line-width) !important; top: 50% !important; }
+        .node-row.single-mode::before {
+            display: block !important;
+            width: 52px !important;
+            left: -52px !important;
+            border-radius: 0 !important;
+            background-color: var(--line-color) !important;
+            height: var(--line-width) !important;
+            top: 50% !important;
+        }
         .node-group > .node-row:only-child::after { display: none; }
-        .node-group > .node-row:only-child::before { display: block !important; left: -48px; width: 48px; }
-        .node-group .content-box::before { content: ''; position: absolute; left: -10px; top: 50%; transform: translateY(-50%); width: 0; height: 0; border-top: 5px solid transparent; border-bottom: 5px solid transparent; border-left: 8px solid var(--line-color); transition: border-left-color 0.3s ease; }
+        .node-group > .node-row:only-child::before {
+            display: block !important;
+            left: -52px;
+            width: 52px;
+        }
+        .node-group .content-box::before {
+            content: '';
+            position: absolute;
+            left: -9px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 0;
+            height: 0;
+            border-top: 5px solid transparent;
+            border-bottom: 5px solid transparent;
+            border-left: 8px solid var(--line-color);
+        }
 
-        /* Cards - Base */
+        /* ========== 统一方形状气泡 ========== */
         .content-box {
             background: var(--card-bg);
-            padding: 10px 22px;
-            border-radius: 10px;
+            backdrop-filter: blur(24px) saturate(180%);
+            -webkit-backdrop-filter: blur(24px) saturate(180%);
+            padding: 14px 22px;
+            border-radius: 16px;          /* 统一圆角 */
             border: 1px solid var(--card-border);
             font-size: 15px;
-            color: var(--text-main);
             font-weight: 500;
+            color: var(--text-main);
             position: relative;
             z-index: 2;
-            min-width: 70px;
+            min-width: 76px;
             text-align: center;
             display: flex;
             flex-direction: column;
             align-items: center;
-            transition: all 0.2s ease;
+            justify-content: center;
+            transition: all 0.25s cubic-bezier(0.25, 0.1, 0.25, 1);
             box-shadow: var(--card-shadow);
             cursor: pointer;
-        }
-        @media (hover: hover) {
-            .content-box:hover { border-color: var(--card-hover-border); background: var(--card-hover-bg); }
+            line-height: 1.2;
         }
 
-        /* 中间层大图标节点 */
-        .content-box.icon-node {
-            font-size: 28px;
-            padding: 14px 20px;
-            min-width: 64px;
-            border-radius: 14px;
-            line-height: 1;
-        }
-
-        /* 最底层叶子胶囊 */
+        /* 中间层 & 叶子层 统一放大一点，更清晰 */
+        .content-box.icon-node,
         .content-box.leaf-node {
-            font-size: 20px;
-            padding: 8px 18px;
-            border-radius: 999px;
-            min-width: 52px;
-            background: var(--card-bg);
+            font-size: 28px;
+            padding: 16px 20px;
+            min-width: 72px;
+            border-radius: 16px;          /* 强制统一方形状 */
         }
 
-        /* Reasons */
-        @keyframes fadeInUp { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+        @media (hover: hover) {
+            .content-box:hover {
+                background: rgba(255, 255, 255, 0.11);
+                border-color: rgba(255, 255, 255, 0.18);
+            }
+            html.light-mode .content-box:hover {
+                background: rgba(255, 255, 255, 0.95);
+                border-color: rgba(0, 0, 0, 0.1);
+            }
+        }
+
+        /* Reason Tag */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(3px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
         .reason-tag {
             font-size: 11px;
-            color: var(--accent-purple);
-            background: rgba(125, 96, 242, 0.12);
-            padding: 2px 8px;
-            border-radius: 10px;
+            color: var(--accent);
+            background: rgba(10, 132, 255, 0.13);
+            padding: 3px 9px;
+            border-radius: 20px;
             margin-top: 8px;
             display: none;
-            font-family: 'JetBrains Mono', monospace;
-            border: 1px solid rgba(125, 96, 242, 0.25);
+            font-weight: 500;
+            letter-spacing: 0.2px;
             animation: fadeInUp 0.25s ease forwards;
             white-space: nowrap;
         }
+        html.light-mode .reason-tag {
+            background: rgba(0, 122, 255, 0.1);
+        }
 
-        /* Check Btn */
+        /* Check Button */
         .check-btn {
-            width: 26px; height: 26px;
+            width: 28px;
+            height: 28px;
             background: var(--btn-bg);
-            border: 2px solid var(--btn-border);
-            border-radius: 7px;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1.5px solid var(--btn-border);
+            border-radius: 9px;
             margin-left: 14px;
             cursor: pointer;
-            display: flex; align-items: center; justify-content: center;
-            font-weight: bold; font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 15px;
             color: transparent;
-            transition: all 0.2s;
-            z-index: 5;
+            transition: all 0.2s ease;
+            z-index: 10;
             flex-shrink: 0;
+            position: relative;
         }
         
         @media (hover: hover) {
-            .check-btn:hover { border-color: var(--btn-hover-border); background: var(--btn-hover-bg); }
+            .check-btn:hover {
+                background: var(--btn-hover-bg);
+            }
         }
 
         .check-btn.active {
-            background-color: var(--accent-purple);
-            border-color: var(--accent-purple);
+            background: var(--accent);
+            border-color: var(--accent);
             color: #fff;
-            box-shadow: 0 0 12px var(--accent-glow);
+            box-shadow: 0 0 16px var(--accent-glow);
         }
         
-        .children-wrapper, .node-row.hidden-sibling { display: none; }
+        .children-wrapper,
+        .node-row.hidden-sibling {
+            display: none;
+        }
         .has-children::after {
             content: '';
             position: absolute;
-            right: -24px; top: 50%;
-            width: 24px; height: var(--line-width);
+            right: -26px;
+            top: 50%;
+            width: 26px;
+            height: var(--line-width);
             background-color: var(--line-color);
             z-index: 0;
             transform: translateY(-50%);
-            transition: background-color 0.3s ease;
         }
 
         /* Theme Switch */
         .theme-switch {
-            position: fixed; top: 24px; right: 28px;
-            width: 50px; height: 26px;
+            position: fixed;
+            top: 24px;
+            right: 28px;
+            width: 51px;
+            height: 31px;
             background-color: var(--switch-bg);
-            border: 2px solid var(--switch-border);
-            border-radius: 13px;
-            cursor: pointer; z-index: 1000;
+            border-radius: 20px;
+            cursor: pointer;
+            z-index: 1000;
             transition: all 0.3s ease;
             box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
         }
-        .theme-switch:hover { border-color: var(--line-color); }
         .theme-switch svg {
-            position: absolute; top: 50%; transform: translateY(-50%);
-            width: 14px; height: 14px;
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 15px;
+            height: 15px;
             color: var(--switch-icon);
             transition: opacity 0.3s ease;
             z-index: 1;
         }
-        .icon-moon { left: 5px; } .icon-sun { right: 5px; } 
-        html:not(.light-mode) .icon-moon { opacity: 1; } html:not(.light-mode) .icon-sun { opacity: 0; }
-        html.light-mode .icon-moon { opacity: 0; } html.light-mode .icon-sun { opacity: 1; }
+        .icon-moon { left: 7px; }
+        .icon-sun { right: 7px; }
+        html:not(.light-mode) .icon-moon { opacity: 1; }
+        html:not(.light-mode) .icon-sun { opacity: 0; }
+        html.light-mode .icon-moon { opacity: 0; }
+        html.light-mode .icon-sun { opacity: 1; }
         .switch-thumb {
-            position: absolute; top: 0; left: 0;
-            width: 22px; height: 22px;
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 27px;
+            height: 27px;
             background-color: var(--switch-thumb);
             border-radius: 50%;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.25);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
             transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             z-index: 2;
         }
-        html:not(.light-mode) .switch-thumb { transform: translateX(24px); }
+        html:not(.light-mode) .switch-thumb { transform: translateX(20px); }
         html.light-mode .switch-thumb { transform: translateX(0); }
 
         .toggle-84 {
-            position: fixed; 
-            top: 24px; right: 92px; 
-            height: 26px;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 13px; font-weight: 700; 
-            color: var(--text-main); 
-            opacity: 0.4; 
+            position: fixed;
+            top: 24px;
+            right: 96px;
+            height: 31px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-main);
+            opacity: 0.35;
             z-index: 1000;
-            letter-spacing: 0.5px; cursor: pointer;
+            letter-spacing: 0.4px;
+            cursor: pointer;
         }
 
-        /* Floating Window */
+        /* Realm Card */
         .realm-card {
             position: fixed;
-            top: 68px; right: 28px;
-            width: 110px; 
-            border-radius: 20px; 
-            padding: 0;
+            top: 68px;
+            right: 28px;
+            width: 112px;
+            border-radius: 18px;
+            padding: 4px 0;
             overflow: hidden;
             background: var(--float-bg);
-            box-shadow: var(--float-shadow); 
+            backdrop-filter: blur(30px) saturate(180%);
+            -webkit-backdrop-filter: blur(30px) saturate(180%);
+            box-shadow: var(--float-shadow);
             border: var(--float-border);
             z-index: 999;
-            opacity: 0; transform: translateY(-8px); pointer-events: none;
-            transition: all 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
-            display: flex; flex-direction: column;
+            opacity: 0;
+            transform: translateY(-8px) scale(0.96);
+            pointer-events: none;
+            transition: all 0.28s cubic-bezier(0.2, 0.8, 0.2, 1);
+            display: flex;
+            flex-direction: column;
         }
-
         .realm-card.show {
-            opacity: 1; transform: translateY(0); pointer-events: auto;
+            opacity: 1;
+            transform: translateY(0) scale(1);
+            pointer-events: auto;
         }
-
         .realm-item {
             display: flex;
-            justify-content: center; 
+            justify-content: center;
             align-items: center;
-            gap: 12px; 
-            padding: 9px 0; 
+            gap: 12px;
+            padding: 9px 0;
             cursor: pointer;
-            font-size: 12px; 
+            font-size: 12.5px;
             font-weight: 500;
             color: var(--float-text-idle);
-            transition: all 0.15s ease; 
+            transition: all 0.15s ease;
         }
-
         @media (hover: hover) {
             .realm-item:not(.selected):hover {
                 background-color: var(--float-item-hover);
             }
         }
-        
         .realm-item.selected {
-            background-color: transparent !important;
             color: var(--float-text-selected);
             font-weight: 600;
         }
-
-        .realm-time { font-family: 'JetBrains Mono', monospace; font-weight: bold; opacity: 0.9; text-align: left; width: 32px; }
-        .realm-name { letter-spacing: 0.5px; text-align: right; width: 32px; }
+        .realm-time {
+            font-variant-numeric: tabular-nums;
+            font-weight: 600;
+            opacity: 0.9;
+            text-align: left;
+            width: 34px;
+        }
+        .realm-name {
+            letter-spacing: 0.3px;
+            text-align: right;
+            width: 34px;
+        }
 
         /* Toast */
         .toast-msg {
-            position: fixed; bottom: 32px; left: 50%;
-            transform: translateX(-50%) translateY(16px);
-            background: rgba(30, 30, 30, 0.75);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            color: #fff;
-            padding: 11px 28px;
-            border-radius: 14px;
+            position: fixed;
+            bottom: 36px;
+            left: 50%;
+            transform: translateX(-50%) translateY(12px);
+            background: rgba(30, 30, 32, 0.8);
+            backdrop-filter: blur(24px) saturate(180%);
+            -webkit-backdrop-filter: blur(24px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #f5f5f7;
+            padding: 12px 28px;
+            border-radius: 16px;
             font-size: 14px;
             font-weight: 500;
-            letter-spacing: 0.3px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
+            box-shadow: 0 12px 40px rgba(0,0,0,0.3);
             opacity: 0;
             transition: all 0.35s cubic-bezier(0.25, 0.8, 0.25, 1);
             z-index: 200;
             pointer-events: none;
         }
         html.light-mode .toast-msg {
-            background: rgba(255, 255, 255, 0.85);
+            background: rgba(255, 255, 255, 0.88);
             border: 1px solid rgba(0, 0, 0, 0.06);
             color: #1d1d1f;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 12px 40px rgba(0,0,0,0.08);
         }
-        .toast-msg.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+        .toast-msg.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
 
         /* Modal */
         .modal-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
             background-color: var(--modal-overlay);
-            backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
             z-index: 2000;
-            display: flex; justify-content: center; align-items: center;
-            opacity: 0; visibility: hidden;
-            transition: opacity 0.2s ease, visibility 0.2s ease;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.25s ease, visibility 0.25s ease;
         }
         .modal-overlay.active {
-            opacity: 1; visibility: visible;
+            opacity: 1;
+            visibility: visible;
         }
-        
         .modal-box {
-            background-color: var(--modal-bg);
-            border: 1px solid var(--modal-border); 
+            background: var(--modal-bg);
+            backdrop-filter: blur(40px) saturate(180%);
+            -webkit-backdrop-filter: blur(40px) saturate(180%);
+            border: 1px solid var(--modal-border);
             width: 300px;
-            max-width: 85%;
-            border-radius: 16px;
-            padding: 24px; 
-            box-shadow: var(--modal-shadow); 
-            transform: scale(0.96);
-            transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            display: flex; flex-direction: column;
-            gap: 14px;
+            max-width: 86%;
+            border-radius: 20px;
+            padding: 26px 24px 20px;
+            box-shadow: var(--modal-shadow);
+            transform: scale(0.94);
+            transition: transform 0.28s cubic-bezier(0.2, 0.8, 0.2, 1);
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
         }
         .modal-overlay.active .modal-box {
             transform: scale(1);
         }
-
         .modal-input {
             width: 100%;
-            padding: 8px 4px;
-            font-size: 20px; 
+            padding: 8px 2px;
+            font-size: 21px;
             color: var(--modal-input-text);
-            background-color: transparent;
+            background: transparent;
             border: none;
-            outline: none; 
+            outline: none;
             box-sizing: border-box;
             font-family: inherit;
         }
-        
         .modal-input::placeholder {
             color: var(--modal-input-placeholder);
         }
-
         .modal-actions {
-            display: flex; justify-content: flex-end; 
-            padding-top: 12px;
-            border-top: 1px solid rgba(255,255,255,0.08);
+            display: flex;
+            justify-content: flex-end;
+            padding-top: 4px;
         }
-        html.light-mode .modal-actions {
-            border-top: 1px solid rgba(0,0,0,0.06);
-        }
-
         .modal-btn {
             border: none;
-            padding: 8px 20px;
-            border-radius: 999px;
+            padding: 9px 22px;
+            border-radius: 980px;
             font-size: 15px;
             font-weight: 600;
             cursor: pointer;
             transition: opacity 0.2s;
         }
         .modal-btn:hover { opacity: 0.85; }
-        
         .modal-btn.confirm {
             background: var(--modal-btn-confirm-bg);
             color: var(--modal-btn-confirm-text);
@@ -638,13 +763,12 @@
                     alert('请连接网络以加载截图组件');
                     return;
                 }
-                
                 html2canvas(document.body, {
                     backgroundColor: getComputedStyle(document.body).backgroundColor
                 }).then(canvas => {
                     canvas.toBlob(blob => {
                         navigator.clipboard.write([new ClipboardItem({'image/png': blob})])
-                            .then(() => showToast('已复制截屏', true))
+                            .then(() => showToast('已复制截屏'))
                             .catch(() => alert('写入剪贴板失败'));
                     });
                 });
@@ -659,8 +783,7 @@
         function toggleRealms() {
             const card = document.getElementById('realmCard');
             if (!card.classList.contains('show')) {
-                const items = card.querySelectorAll('.realm-item');
-                items.forEach(item => item.classList.remove('selected'));
+                card.querySelectorAll('.realm-item').forEach(item => item.classList.remove('selected'));
             }
             card.classList.toggle('show');
         }
@@ -677,39 +800,32 @@
             const input = document.getElementById('modal-input');
             input.value = ''; 
             overlay.classList.add('active');
-            setTimeout(() => input.focus(), 100);
+            setTimeout(() => input.focus(), 80);
         }
 
         function closeInputModal() {
-            const overlay = document.getElementById('custom-modal-overlay');
-            overlay.classList.remove('active');
+            document.getElementById('custom-modal-overlay').classList.remove('active');
             pendingCallback = null;
         }
 
         function handleInputConfirm() {
-            const input = document.getElementById('modal-input');
-            const val = input.value.trim();
-            if (val && pendingCallback) {
-                pendingCallback(val);
-            }
+            const val = document.getElementById('modal-input').value.trim();
+            if (val && pendingCallback) pendingCallback(val);
             closeInputModal();
         }
 
         function handleOverlayClick(e) {
-            if (e.target.id === 'custom-modal-overlay') {
-                closeInputModal();
-            }
+            if (e.target.id === 'custom-modal-overlay') closeInputModal();
         }
 
         document.getElementById('modal-confirm-btn').addEventListener('click', handleInputConfirm);
-        
-        document.getElementById('modal-input').addEventListener('keypress', function(e) {
+        document.getElementById('modal-input').addEventListener('keypress', e => {
             if (e.key === 'Enter') handleInputConfirm();
         });
 
         function toggleNode(btn, needReason, reasonTagId) {
-            let currentRow = btn.closest('.node-row');
-            let parentGroup = currentRow.closest('.node-group');
+            const currentRow = btn.closest('.node-row');
+            const parentGroup = currentRow.closest('.node-group');
             
             if (btn.classList.contains('active')) {
                 resetSelection(currentRow, parentGroup);
@@ -718,65 +834,55 @@
 
             const activate = (reasonText) => {
                 if (reasonTagId && reasonText) {
-                    let tag = document.getElementById(reasonTagId);
-                    if(tag) {
+                    const tag = document.getElementById(reasonTagId);
+                    if (tag) {
                         tag.innerText = "# " + reasonText;
                         tag.style.display = "block";
                     }
                 }
-
                 btn.classList.add('active');
-                currentRow.classList.add('has-children');
-                currentRow.classList.add('single-mode'); 
-
-                let nextWrapper = currentRow.querySelector('.children-wrapper');
+                currentRow.classList.add('has-children', 'single-mode');
+                const nextWrapper = currentRow.querySelector('.children-wrapper');
                 if (nextWrapper) nextWrapper.style.display = 'block';
 
                 if (parentGroup) {
-                    let siblings = parentGroup.children;
-                    for (let sibling of siblings) {
+                    [...parentGroup.children].forEach(sibling => {
                         if (sibling !== currentRow) sibling.classList.add('hidden-sibling');
-                    }
+                    });
                 }
             };
 
             if (needReason) {
-                openInputModal((reason) => {
-                    activate(reason);
-                });
+                openInputModal(activate);
             } else {
                 activate(null);
             }
         }
 
         function resetSelection(currentRow, parentGroup) {
-            let btn = currentRow.querySelector('.check-btn');
-            let reasonTag = currentRow.querySelector('.reason-tag');
-            let nextWrapper = currentRow.querySelector('.children-wrapper');
+            const btn = currentRow.querySelector('.check-btn');
+            const reasonTag = currentRow.querySelector('.reason-tag');
+            const nextWrapper = currentRow.querySelector('.children-wrapper');
             
             btn.classList.remove('active');
-            currentRow.classList.remove('has-children');
-            currentRow.classList.remove('single-mode');
-
+            currentRow.classList.remove('has-children', 'single-mode');
             if (reasonTag) reasonTag.style.display = 'none';
 
             if (nextWrapper) {
                 nextWrapper.style.display = 'none';
-                let allDescendants = nextWrapper.querySelectorAll('.node-row');
-                allDescendants.forEach(row => {
+                nextWrapper.querySelectorAll('.node-row').forEach(row => {
                     row.classList.remove('has-children', 'single-mode', 'hidden-sibling');
-                    let childBtn = row.querySelector('.check-btn');
+                    const childBtn = row.querySelector('.check-btn');
                     if (childBtn) childBtn.classList.remove('active');
-                    let childTag = row.querySelector('.reason-tag');
+                    const childTag = row.querySelector('.reason-tag');
                     if (childTag) childTag.style.display = 'none';
-                    let childWrapper = row.querySelector('.children-wrapper');
+                    const childWrapper = row.querySelector('.children-wrapper');
                     if (childWrapper) childWrapper.style.display = 'none';
                 });
             }
 
             if (parentGroup) {
-                let siblings = parentGroup.children;
-                for (let sibling of siblings) sibling.classList.remove('hidden-sibling');
+                [...parentGroup.children].forEach(sibling => sibling.classList.remove('hidden-sibling'));
             }
         }
 
@@ -784,92 +890,76 @@
         let pendingText = "";
 
         function selectLeaf(el) {
-            let currentRow = el.closest('.node-row');
-            let btn = currentRow.querySelector('.check-btn');
-            
-            if (btn.classList.contains('active')) {
-                btn.classList.remove('active');
-            } else {
-                btn.classList.add('active');
-            }
-            
+            const currentRow = el.closest('.node-row');
+            const btn = currentRow.querySelector('.check-btn');
+            btn.classList.toggle('active');
             triggerDebouncedCopy(currentRow);
         }
 
         function triggerDebouncedCopy(leafRow) {
-            let text = calculatePath(leafRow);
+            const text = calculatePath(leafRow);
             if (!text) return;
-
             pendingText = text;
 
             const toast = document.getElementById('toast');
-            
-            toast.innerText = "正在选择... (停止后写入)";
+            toast.innerText = "正在选择...";
             toast.classList.add('show');
 
             if (copyTimer) clearTimeout(copyTimer);
-
             copyTimer = setTimeout(() => {
                 navigator.clipboard.writeText(pendingText).then(() => {
                     toast.innerText = "已复制决策链";
-                    setTimeout(() => {
-                        toast.classList.remove('show');
-                    }, 1000);
+                    setTimeout(() => toast.classList.remove('show'), 1100);
                 }).catch(() => {
-                    toast.innerText = "复制失败(浏览器限制)";
+                    toast.innerText = "复制失败";
                 });
-            }, 1500); 
+            }, 1400);
         }
 
         function calculatePath(leafRow) {
-            let parentGroup = leafRow.closest('.node-group');
-            let activeRows = parentGroup.querySelectorAll('.node-row .check-btn.active');
-            let activeTexts = [];
+            const parentGroup = leafRow.closest('.node-group');
+            const activeRows = parentGroup.querySelectorAll('.node-row .check-btn.active');
+            const activeTexts = [];
             
             activeRows.forEach(btn => {
-                let row = btn.closest('.node-row');
-                let contentBox = row.querySelector('.content-box');
-                let clone = contentBox.cloneNode(true);
-                let tags = clone.querySelectorAll('.reason-tag');
-                tags.forEach(t => t.remove());
+                const row = btn.closest('.node-row');
+                const contentBox = row.querySelector('.content-box');
+                const clone = contentBox.cloneNode(true);
+                clone.querySelectorAll('.reason-tag').forEach(t => t.remove());
                 activeTexts.push(clone.innerText.trim());
             });
 
             if (activeTexts.length === 0) return null;
 
-            let leafString = activeTexts.join('、');
-            let path = [leafString];
+            let path = [activeTexts.join('、')];
             let currentWrapper = parentGroup.closest('.children-wrapper');
             
             if (currentWrapper) {
                 let parentRow = currentWrapper.closest('.node-row');
                 while (parentRow && parentRow.id !== 'root-node') {
-                    let contentBox = parentRow.querySelector('.content-box');
-                    let clone = contentBox.cloneNode(true);
-                    let tags = clone.querySelectorAll('.reason-tag');
-                    tags.forEach(t => t.remove());
+                    const contentBox = parentRow.querySelector('.content-box');
+                    const clone = contentBox.cloneNode(true);
+                    clone.querySelectorAll('.reason-tag').forEach(t => t.remove());
                     let mainText = clone.innerText.trim();
-                    let reasonTag = contentBox.querySelector('.reason-tag');
-                    let reasonText = (reasonTag && reasonTag.style.display !== 'none') ? ` ${reasonTag.innerText}` : '';
+                    const reasonTag = contentBox.querySelector('.reason-tag');
+                    const reasonText = (reasonTag && reasonTag.style.display !== 'none') ? ` ${reasonTag.innerText}` : '';
                     path.unshift(mainText + reasonText);
                     
-                    let gp = parentRow.closest('.node-group');
+                    const gp = parentRow.closest('.node-group');
                     if (!gp) break;
-                    let gw = gp.closest('.children-wrapper');
+                    const gw = gp.closest('.children-wrapper');
                     if (!gw) break;
                     parentRow = gw.closest('.node-row');
                 }
             }
-            return path.join(' -> ');
+            return path.join(' → ');
         }
 
-        function showToast(msg, immediate) {
+        function showToast(msg) {
             const toast = document.getElementById('toast');
             toast.innerText = msg;
             toast.classList.add('show');
-            setTimeout(() => {
-                toast.classList.remove('show');
-            }, 2000);
+            setTimeout(() => toast.classList.remove('show'), 2000);
         }
     </script>
 </body>
