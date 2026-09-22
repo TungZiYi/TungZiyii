@@ -5,13 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>Little Green Bottle</title>
     
-    <!-- ✅ 修复：引用你仓库里的本地图片 (文件名有空格，需用 %20 代替) -->
     <link rel="icon" href="./Little%20Green%20Bottle.png" type="image/png">
-
-    <!-- 截图库 -->
     <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
 
-    <!-- 防止闪烁脚本 -->
     <script>
         (function() {
             if (localStorage.getItem('theme') === 'light') {
@@ -22,9 +18,6 @@
 
     <style>
         :root {
-            /* ==============================
-               1. 全局基础变量
-               ============================== */
             --bg-color: #1e1e1e;       
             --card-bg: #2b2b2b;        
             --card-border: #383838;    
@@ -33,7 +26,6 @@
             --accent-purple: #7d60f2;  
             --accent-glow: rgba(125, 96, 242, 0.4);
             
-            /* --- 浮窗变量 (黑夜模式) --- */
             --float-bg: #1e1e1e; 
             --float-border: 1px solid #383838; 
             --float-shadow: none; 
@@ -57,29 +49,17 @@
             --switch-thumb: #ffffff;
             --switch-icon: #dcdcdc;
 
-            /* ==============================
-               3. 模态框变量 (推特风格)
-               ============================== */
             --modal-overlay: rgba(0, 0, 0, 0.7); 
-            
-            /* 背景色 #1e1e1e */
             --modal-bg: #1e1e1e; 
             --modal-border: #383838; 
             --modal-shadow: 0 12px 30px rgba(0,0,0,0.5); 
-            
-            /* 输入框 */
             --modal-input-bg: transparent; 
             --modal-input-text: #ffffff;
             --modal-input-placeholder: #71767b;
-
-            /* 按钮 */
             --modal-btn-confirm-bg: #ffffff; 
             --modal-btn-confirm-text: #000000;
         }
 
-        /* ==============================
-           2. 亮色模式 (Light Mode)
-           ============================== */
         html.light-mode {
             --bg-color: #ffffff;       
             --card-bg: #f7f7f7;        
@@ -110,16 +90,13 @@
             --switch-thumb: #ffffff;
             --switch-icon: #5c5c5c;
 
-            /* --- 模态框变量 (Light) --- */
             --modal-overlay: rgba(0, 0, 0, 0.4);
             --modal-bg: #ffffff;
             --modal-border: transparent;
             --modal-shadow: none; 
-            
             --modal-input-bg: transparent;
             --modal-input-text: #0f1419;
             --modal-input-placeholder: #536471;
-
             --modal-btn-confirm-bg: #0f1419;
             --modal-btn-confirm-text: #ffffff;
         }
@@ -140,7 +117,6 @@
             user-select: none; -webkit-user-select: none;
         }
 
-        /* Tree Layout */
         .tree { display: flex; align-items: center; }
         .node-group { display: flex; flex-direction: column; justify-content: center; padding-left: 50px; position: relative; }
         .node-row { display: flex; align-items: center; position: relative; padding: 14px 0; transition: all 0.3s ease; }
@@ -154,24 +130,20 @@
         .node-group > .node-row:last-child::before { display: none; }
         .node-group > .node-row:not(:first-child):not(:last-child)::after { background-color: var(--line-color); width: var(--line-width); left: -50px; top: 0; height: 100%; border: none; }
 
-        /* Focus Mode */
         .node-row.single-mode::after { display: none !important; }
         .node-row.single-mode::before { display: block !important; width: 50px !important; left: -50px !important; border-radius: 0 !important; background-color: var(--line-color) !important; height: var(--line-width) !important; top: 50% !important; }
         .node-group > .node-row:only-child::after { display: none; }
         .node-group > .node-row:only-child::before { display: block !important; left: -50px; width: 50px; }
         .node-group .content-box::before { content: ''; position: absolute; left: -10px; top: 50%; transform: translateY(-50%); width: 0; height: 0; border-top: 6px solid transparent; border-bottom: 6px solid transparent; border-left: 10px solid var(--line-color); transition: border-left-color 0.3s ease, border-color 0.3s ease; }
 
-        /* Cards */
         .content-box { background: var(--card-bg); padding: 10px 24px; border-radius: 6px; border: 1px solid var(--card-border); font-size: 15px; color: var(--text-main); font-weight: 500; position: relative; z-index: 2; min-width: 80px; text-align: center; display: flex; flex-direction: column; align-items: center; transition: all 0.2s ease; box-shadow: var(--card-shadow); cursor: pointer; }
         @media (hover: hover) {
             .content-box:hover { border-color: var(--card-hover-border); background: var(--card-hover-bg); }
         }
 
-        /* Reasons */
         @keyframes fadeInUp { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
         .reason-tag { font-size: 12px; color: var(--accent-purple); background: rgba(125, 96, 242, 0.15); padding: 3px 8px; border-radius: 12px; margin-top: 8px; display: none; font-family: 'JetBrains Mono', monospace; border: 1px solid rgba(125, 96, 242, 0.3); animation: fadeInUp 0.3s ease forwards; white-space: pre-line; text-align: left; }
 
-        /* Check Btn */
         .check-btn { width: 28px; height: 28px; background: var(--btn-bg); border: 2px solid var(--btn-border); border-radius: 6px; margin-left: 15px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 16px; color: transparent; transition: all 0.2s; z-index: 5; flex-shrink: 0; }
         
         @media (hover: hover) {
@@ -183,7 +155,6 @@
         .children-wrapper, .node-row.hidden-sibling { display: none; }
         .has-children::after { content: ''; position: absolute; right: -25px; top: 50%; width: 25px; height: var(--line-width); background-color: var(--line-color); z-index: 0; transform: translateY(-50%); transition: background-color 0.3s ease, border-color 0.3s ease; }
 
-        /* Theme Switch */
         .theme-switch { position: fixed; top: 25px; right: 30px; width: 50px; height: 26px; background-color: var(--switch-bg); border: 2px solid var(--switch-border); border-radius: 13px; cursor: pointer; z-index: 1000; transition: background-color 0.3s ease, border-color 0.3s ease; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         .theme-switch:hover { border-color: var(--line-color); }
         .theme-switch svg { position: absolute; top: 50%; transform: translateY(-50%); width: 14px; height: 14px; color: var(--switch-icon); transition: opacity 0.3s ease; z-index: 1; }
@@ -194,9 +165,6 @@
         html:not(.light-mode) .switch-thumb { transform: translateX(24px); }
         html.light-mode .switch-thumb { transform: translateX(0); }
 
-        /* 
-           84 Toggle Button (Fixed: Pure Text, No Hover)
-        */
         .toggle-84 {
             position: fixed; 
             top: 25px; right: 95px; 
@@ -208,9 +176,7 @@
             z-index: 1000;
             letter-spacing: 0.5px; cursor: pointer;
         }
-        /* No hover effect */
 
-        /* Floating Window (84 Realms) */
         .realm-card {
             position: fixed;
             top: 70px; right: 30px;
@@ -267,14 +233,10 @@
         .realm-time { font-family: 'JetBrains Mono', monospace; font-weight: bold; opacity: 0.9; text-align: left; width: 32px; }
         .realm-name { letter-spacing: 0.5px; text-align: right; width: 32px; }
 
-        /* Toast (Radius 12px) */
         .toast-msg { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(20px); background: rgba(30, 30, 30, 0.6); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.08); color: #fff; padding: 10px 26px; border-radius: 12px; font-size: 14px; font-weight: 500; letter-spacing: 0.5px; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3); opacity: 0; transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); z-index: 200; pointer-events: none; }
         html.light-mode .toast-msg { background: rgba(255, 255, 255, 0.7); border: 1px solid rgba(0, 0, 0, 0.05); color: #333; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1); }
         .toast-msg.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
-        /* =========================================
-           Custom Modal (Small Size: 300px & Unified Radius: 12px)
-           ========================================= */
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background-color: var(--modal-overlay);
@@ -306,7 +268,6 @@
             transform: scale(1);
         }
 
-        /* 输入框：Input 风格 (单行) */
         .modal-input {
             width: 100%;
             padding: 8px 4px;
@@ -323,7 +284,6 @@
             color: var(--modal-input-placeholder);
         }
 
-        /* 底部按钮区 */
         .modal-actions {
             display: flex; justify-content: flex-end; 
             padding-top: 12px;
@@ -336,7 +296,7 @@
         .modal-btn {
             border: none;
             padding: 8px 18px;
-            border-radius: 999px; /* Pill shape */
+            border-radius: 999px;
             font-size: 15px;
             font-weight: 700;
             cursor: pointer;
@@ -348,15 +308,12 @@
             background: var(--modal-btn-confirm-bg);
             color: var(--modal-btn-confirm-text);
         }
-
     </style>
 </head>
 <body>
 
-    <!-- 84 按钮 (纯文字) -->
     <div class="toggle-84" onclick="toggleRealms()" title="周期">84</div>
 
-    <!-- Final Floating Window -->
     <div class="realm-card" id="realmCard">
         <div class="realm-item" onclick="toggleSelection(this)"><span class="realm-time">1W</span> <span class="realm-name">子怡</span></div>
         <div class="realm-item" onclick="toggleSelection(this)"><span class="realm-time">1D</span> <span class="realm-name">化神</span></div>
@@ -367,17 +324,14 @@
         <div class="realm-item" onclick="toggleSelection(this)"><span class="realm-time">5m</span> <span class="realm-name">凡人</span></div>
     </div>
 
-    <!-- 主题开关 -->
     <div class="theme-switch" onclick="toggleTheme()" title="切换外观">
         <svg class="icon-moon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
         <svg class="icon-sun" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
         <div class="switch-thumb"></div>
     </div>
 
-    <!-- Toast 提示 -->
     <div class="toast-msg" id="toast">已复制决策链</div>
 
-    <!-- Custom Modal (Input type=text) -->
     <div id="custom-modal-overlay" class="modal-overlay" onclick="handleOverlayClick(event)">
         <div class="modal-box">
             <input type="text" id="modal-input" class="modal-input" placeholder="输入理由..." autocomplete="off">
@@ -412,16 +366,25 @@
                                     <div class="children-wrapper">
                                         <div class="node-group">
                                             <div class="node-row">
-                                                <div class="content-box" onclick="selectLeaf(this)">静止 🧊</div>
-                                                <div class="check-btn leaf-btn" onclick="selectLeaf(this)">✔</div>
+                                                <div class="content-box">
+                                                    静止 🧊
+                                                    <div class="reason-tag" id="r-ice-1h-static"></div>
+                                                </div>
+                                                <div class="check-btn leaf-btn" onclick="selectLeaf(this, 'r-ice-1h-static')">✔</div>
                                             </div>
                                             <div class="node-row">
-                                                <div class="content-box" onclick="selectLeaf(this)">减速 💧</div>
-                                                <div class="check-btn leaf-btn" onclick="selectLeaf(this)">✔</div>
+                                                <div class="content-box">
+                                                    减速 💧
+                                                    <div class="reason-tag" id="r-ice-1h-slow"></div>
+                                                </div>
+                                                <div class="check-btn leaf-btn" onclick="selectLeaf(this, 'r-ice-1h-slow')">✔</div>
                                             </div>
                                             <div class="node-row">
-                                                <div class="content-box" onclick="selectLeaf(this)">加速 🔥</div>
-                                                <div class="check-btn leaf-btn" onclick="selectLeaf(this)">✔</div>
+                                                <div class="content-box">
+                                                    加速 🔥
+                                                    <div class="reason-tag" id="r-ice-1h-fast"></div>
+                                                </div>
+                                                <div class="check-btn leaf-btn" onclick="selectLeaf(this, 'r-ice-1h-fast')">✔</div>
                                             </div>
                                         </div>
                                     </div>
@@ -433,16 +396,25 @@
                                     <div class="children-wrapper">
                                         <div class="node-group">
                                             <div class="node-row">
-                                                <div class="content-box" onclick="selectLeaf(this)">静止 🧊</div>
-                                                <div class="check-btn leaf-btn" onclick="selectLeaf(this)">✔</div>
+                                                <div class="content-box">
+                                                    静止 🧊
+                                                    <div class="reason-tag" id="r-ice-30-static"></div>
+                                                </div>
+                                                <div class="check-btn leaf-btn" onclick="selectLeaf(this, 'r-ice-30-static')">✔</div>
                                             </div>
                                             <div class="node-row">
-                                                <div class="content-box" onclick="selectLeaf(this)">减速 💧</div>
-                                                <div class="check-btn leaf-btn" onclick="selectLeaf(this)">✔</div>
+                                                <div class="content-box">
+                                                    减速 💧
+                                                    <div class="reason-tag" id="r-ice-30-slow"></div>
+                                                </div>
+                                                <div class="check-btn leaf-btn" onclick="selectLeaf(this, 'r-ice-30-slow')">✔</div>
                                             </div>
                                             <div class="node-row">
-                                                <div class="content-box" onclick="selectLeaf(this)">加速 🔥</div>
-                                                <div class="check-btn leaf-btn" onclick="selectLeaf(this)">✔</div>
+                                                <div class="content-box">
+                                                    加速 🔥
+                                                    <div class="reason-tag" id="r-ice-30-fast"></div>
+                                                </div>
+                                                <div class="check-btn leaf-btn" onclick="selectLeaf(this, 'r-ice-30-fast')">✔</div>
                                             </div>
                                         </div>
                                     </div>
@@ -468,16 +440,25 @@
                                     <div class="children-wrapper">
                                         <div class="node-group">
                                             <div class="node-row">
-                                                <div class="content-box" onclick="selectLeaf(this)">静止 🧊</div>
-                                                <div class="check-btn leaf-btn" onclick="selectLeaf(this)">✔</div>
+                                                <div class="content-box">
+                                                    静止 🧊
+                                                    <div class="reason-tag" id="r-water-1h-static"></div>
+                                                </div>
+                                                <div class="check-btn leaf-btn" onclick="selectLeaf(this, 'r-water-1h-static')">✔</div>
                                             </div>
                                             <div class="node-row">
-                                                <div class="content-box" onclick="selectLeaf(this)">减速 💧</div>
-                                                <div class="check-btn leaf-btn" onclick="selectLeaf(this)">✔</div>
+                                                <div class="content-box">
+                                                    减速 💧
+                                                    <div class="reason-tag" id="r-water-1h-slow"></div>
+                                                </div>
+                                                <div class="check-btn leaf-btn" onclick="selectLeaf(this, 'r-water-1h-slow')">✔</div>
                                             </div>
                                             <div class="node-row">
-                                                <div class="content-box" onclick="selectLeaf(this)">加速 🔥</div>
-                                                <div class="check-btn leaf-btn" onclick="selectLeaf(this)">✔</div>
+                                                <div class="content-box">
+                                                    加速 🔥
+                                                    <div class="reason-tag" id="r-water-1h-fast"></div>
+                                                </div>
+                                                <div class="check-btn leaf-btn" onclick="selectLeaf(this, 'r-water-1h-fast')">✔</div>
                                             </div>
                                         </div>
                                     </div>
@@ -489,16 +470,25 @@
                                     <div class="children-wrapper">
                                         <div class="node-group">
                                             <div class="node-row">
-                                                <div class="content-box" onclick="selectLeaf(this)">静止 🧊</div>
-                                                <div class="check-btn leaf-btn" onclick="selectLeaf(this)">✔</div>
+                                                <div class="content-box">
+                                                    静止 🧊
+                                                    <div class="reason-tag" id="r-water-30-static"></div>
+                                                </div>
+                                                <div class="check-btn leaf-btn" onclick="selectLeaf(this, 'r-water-30-static')">✔</div>
                                             </div>
                                             <div class="node-row">
-                                                <div class="content-box" onclick="selectLeaf(this)">减速 💧</div>
-                                                <div class="check-btn leaf-btn" onclick="selectLeaf(this)">✔</div>
+                                                <div class="content-box">
+                                                    减速 💧
+                                                    <div class="reason-tag" id="r-water-30-slow"></div>
+                                                </div>
+                                                <div class="check-btn leaf-btn" onclick="selectLeaf(this, 'r-water-30-slow')">✔</div>
                                             </div>
                                             <div class="node-row">
-                                                <div class="content-box" onclick="selectLeaf(this)">加速 🔥</div>
-                                                <div class="check-btn leaf-btn" onclick="selectLeaf(this)">✔</div>
+                                                <div class="content-box">
+                                                    加速 🔥
+                                                    <div class="reason-tag" id="r-water-30-fast"></div>
+                                                </div>
+                                                <div class="check-btn leaf-btn" onclick="selectLeaf(this, 'r-water-30-fast')">✔</div>
                                             </div>
                                         </div>
                                     </div>
@@ -524,16 +514,25 @@
                                     <div class="children-wrapper">
                                         <div class="node-group">
                                             <div class="node-row">
-                                                <div class="content-box" onclick="selectLeaf(this)">静止 🧊</div>
-                                                <div class="check-btn leaf-btn" onclick="selectLeaf(this)">✔</div>
+                                                <div class="content-box">
+                                                    静止 🧊
+                                                    <div class="reason-tag" id="r-fire-1h-static"></div>
+                                                </div>
+                                                <div class="check-btn leaf-btn" onclick="selectLeaf(this, 'r-fire-1h-static')">✔</div>
                                             </div>
                                             <div class="node-row">
-                                                <div class="content-box" onclick="selectLeaf(this)">减速 💧</div>
-                                                <div class="check-btn leaf-btn" onclick="selectLeaf(this)">✔</div>
+                                                <div class="content-box">
+                                                    减速 💧
+                                                    <div class="reason-tag" id="r-fire-1h-slow"></div>
+                                                </div>
+                                                <div class="check-btn leaf-btn" onclick="selectLeaf(this, 'r-fire-1h-slow')">✔</div>
                                             </div>
                                             <div class="node-row">
-                                                <div class="content-box" onclick="selectLeaf(this)">加速 🔥</div>
-                                                <div class="check-btn leaf-btn" onclick="selectLeaf(this)">✔</div>
+                                                <div class="content-box">
+                                                    加速 🔥
+                                                    <div class="reason-tag" id="r-fire-1h-fast"></div>
+                                                </div>
+                                                <div class="check-btn leaf-btn" onclick="selectLeaf(this, 'r-fire-1h-fast')">✔</div>
                                             </div>
                                         </div>
                                     </div>
@@ -545,16 +544,25 @@
                                     <div class="children-wrapper">
                                         <div class="node-group">
                                             <div class="node-row">
-                                                <div class="content-box" onclick="selectLeaf(this)">静止 🧊</div>
-                                                <div class="check-btn leaf-btn" onclick="selectLeaf(this)">✔</div>
+                                                <div class="content-box">
+                                                    静止 🧊
+                                                    <div class="reason-tag" id="r-fire-30-static"></div>
+                                                </div>
+                                                <div class="check-btn leaf-btn" onclick="selectLeaf(this, 'r-fire-30-static')">✔</div>
                                             </div>
                                             <div class="node-row">
-                                                <div class="content-box" onclick="selectLeaf(this)">减速 💧</div>
-                                                <div class="check-btn leaf-btn" onclick="selectLeaf(this)">✔</div>
+                                                <div class="content-box">
+                                                    减速 💧
+                                                    <div class="reason-tag" id="r-fire-30-slow"></div>
+                                                </div>
+                                                <div class="check-btn leaf-btn" onclick="selectLeaf(this, 'r-fire-30-slow')">✔</div>
                                             </div>
                                             <div class="node-row">
-                                                <div class="content-box" onclick="selectLeaf(this)">加速 🔥</div>
-                                                <div class="check-btn leaf-btn" onclick="selectLeaf(this)">✔</div>
+                                                <div class="content-box">
+                                                    加速 🔥
+                                                    <div class="reason-tag" id="r-fire-30-fast"></div>
+                                                </div>
+                                                <div class="check-btn leaf-btn" onclick="selectLeaf(this, 'r-fire-30-fast')">✔</div>
                                             </div>
                                         </div>
                                     </div>
@@ -569,7 +577,6 @@
     </div>
 
     <script>
-        // 快捷键 Shift+Cmd+S 截图
         document.addEventListener('keydown', function(e) {
             if (e.shiftKey && (e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 's') {
                 e.preventDefault();
@@ -595,7 +602,6 @@
             localStorage.setItem('theme', document.documentElement.classList.contains('light-mode') ? 'light' : 'dark');
         }
 
-        // --- 境界卡逻辑 ---
         function toggleRealms() {
             const card = document.getElementById('realmCard');
             if (!card.classList.contains('show')) {
@@ -609,7 +615,6 @@
             el.classList.toggle('selected');
         }
 
-        // --- 模态框逻辑 ---
         let pendingCallback = null; 
 
         function openInputModal(callback) {
@@ -636,7 +641,6 @@
             closeInputModal();
         }
 
-        // 点击遮罩关闭
         function handleOverlayClick(e) {
             if (e.target.id === 'custom-modal-overlay') {
                 closeInputModal();
@@ -649,7 +653,6 @@
             if (e.key === 'Enter') handleInputConfirm();
         });
 
-        // --- 核心树逻辑 ---
         function toggleNode(btn, needReason, reasonTagId) {
             let currentRow = btn.closest('.node-row');
             let parentGroup = currentRow.closest('.node-group');
@@ -723,46 +726,49 @@
             }
         }
 
-        // --- 多选叶子节点 + 延时复制逻辑 ---
-        
-        let copyTimer = null; // 全局定时器
-        let pendingText = ""; // 待复制的文本
+        // ========== 升级后的叶子节点选择（支持理由） ==========
+        let copyTimer = null;
+        let pendingText = "";
 
-        function selectLeaf(el) {
+        function selectLeaf(el, reasonTagId) {
             let currentRow = el.closest('.node-row');
             let btn = currentRow.querySelector('.check-btn');
-            
+            let reasonTag = reasonTagId ? document.getElementById(reasonTagId) : null;
+
             if (btn.classList.contains('active')) {
+                // 取消选中
                 btn.classList.remove('active');
-            } else {
-                btn.classList.add('active');
+                if (reasonTag) reasonTag.style.display = 'none';
+                triggerDebouncedCopy(currentRow);
+                return;
             }
-            
-            // 触发带防抖的复制流程
-            triggerDebouncedCopy(currentRow);
+
+            // 选中时弹出理由输入
+            openInputModal((reason) => {
+                if (reasonTag) {
+                    reasonTag.innerText = "# " + reason;
+                    reasonTag.style.display = "block";
+                }
+                btn.classList.add('active');
+                triggerDebouncedCopy(currentRow);
+            });
         }
 
         function triggerDebouncedCopy(leafRow) {
-            // 1. 计算当前的完整路径字符串
             let text = calculatePath(leafRow);
-            if (!text) return; // 如果没选中任何东西，不做操作
+            if (!text) return;
 
-            pendingText = text; // 更新待复制内容
+            pendingText = text;
 
             const toast = document.getElementById('toast');
-            
-            // 2. 显示“正在选择...”状态
             toast.innerText = "正在选择... (停止后写入)";
             toast.classList.add('show');
 
-            // 3. 重置定时器 (防抖: 1.5秒)
             if (copyTimer) clearTimeout(copyTimer);
 
             copyTimer = setTimeout(() => {
-                // 4. 定时器结束，执行真正的复制
                 navigator.clipboard.writeText(pendingText).then(() => {
                     toast.innerText = "已复制决策链";
-                    // 1秒后隐藏 Toast
                     setTimeout(() => {
                         toast.classList.remove('show');
                     }, 1000);
@@ -772,7 +778,6 @@
             }, 1500); 
         }
 
-        // 计算路径的辅助函数（不执行复制，只返回字符串）
         function calculatePath(leafRow) {
             let parentGroup = leafRow.closest('.node-group');
             let activeRows = parentGroup.querySelectorAll('.node-row .check-btn.active');
@@ -783,8 +788,15 @@
                 let contentBox = row.querySelector('.content-box');
                 let clone = contentBox.cloneNode(true);
                 let tags = clone.querySelectorAll('.reason-tag');
-                tags.forEach(t => t.remove());
-                activeTexts.push(clone.innerText.trim());
+                // 保留理由文字
+                let reasonText = '';
+                tags.forEach(t => {
+                    if (t.style.display !== 'none' && t.innerText) {
+                        reasonText = ' ' + t.innerText;
+                    }
+                    t.remove();
+                });
+                activeTexts.push(clone.innerText.trim() + reasonText);
             });
 
             if (activeTexts.length === 0) return null;
@@ -815,7 +827,6 @@
             return path.join(' -> ');
         }
 
-        // 简单的 Toast 显示（用于截图等立即操作）
         function showToast(msg, immediate) {
             const toast = document.getElementById('toast');
             toast.innerText = msg;
