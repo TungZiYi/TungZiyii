@@ -726,30 +726,53 @@
             }
         }
 
-        // ========== 升级后的叶子节点选择（支持理由） ==========
+        // ========== 叶子节点：单选 + 聚焦（和其他2个消失） ==========
         let copyTimer = null;
         let pendingText = "";
 
         function selectLeaf(el, reasonTagId) {
             let currentRow = el.closest('.node-row');
+            let parentGroup = currentRow.closest('.node-group');
             let btn = currentRow.querySelector('.check-btn');
             let reasonTag = reasonTagId ? document.getElementById(reasonTagId) : null;
 
+            // 如果已经选中 → 取消选中（恢复其他两个）
             if (btn.classList.contains('active')) {
-                // 取消选中
                 btn.classList.remove('active');
+                currentRow.classList.remove('single-mode');
                 if (reasonTag) reasonTag.style.display = 'none';
+
+                // 恢复所有兄弟
+                if (parentGroup) {
+                    let siblings = parentGroup.children;
+                    for (let sibling of siblings) {
+                        sibling.classList.remove('hidden-sibling');
+                    }
+                }
                 triggerDebouncedCopy(currentRow);
                 return;
             }
 
-            // 选中时弹出理由输入
+            // 选中时弹出理由
             openInputModal((reason) => {
                 if (reasonTag) {
                     reasonTag.innerText = "# " + reason;
                     reasonTag.style.display = "block";
                 }
+
                 btn.classList.add('active');
+                currentRow.classList.add('single-mode');
+
+                // 隐藏其他两个兄弟
+                if (parentGroup) {
+                    let siblings = parentGroup.children;
+                    for (let sibling of siblings) {
+                        if (sibling !== currentRow) {
+                            sibling.classList.add('hidden-sibling');
+                        }
+                    }
+                }
+
                 triggerDebouncedCopy(currentRow);
             });
         }
@@ -788,7 +811,6 @@
                 let contentBox = row.querySelector('.content-box');
                 let clone = contentBox.cloneNode(true);
                 let tags = clone.querySelectorAll('.reason-tag');
-                // 保留理由文字
                 let reasonText = '';
                 tags.forEach(t => {
                     if (t.style.display !== 'none' && t.innerText) {
