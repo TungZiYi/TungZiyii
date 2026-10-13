@@ -120,29 +120,50 @@
             transition: background-color 0.3s ease, color 0.3s ease;
             user-select: none; 
             -webkit-user-select: none;
+            position: relative;
         }
 
-        /* ========== 粘贴图片区域 ========== */
+        /* ========== 图片区域（上半部分） ========== */
         #image-container {
             display: none;
-            position: absolute;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 50vh;
             z-index: 50;
-            max-width: 85%;
-            text-align: center;
+            background: var(--bg-color);
+            display: none;
+            align-items: center;
+            justify-content: center;
             cursor: pointer;
+            overflow: hidden;
         }
 
         #image-container img {
             max-width: 100%;
-            max-height: 45vh;
+            max-height: 100%;
+            width: auto;
             height: auto;
-            border-radius: 12px;
-            box-shadow: 0 8px 28px rgba(0,0,0,0.45);
+            object-fit: contain;
+            border-radius: 0;          /* 无圆角 */
+            box-shadow: none !important; /* 彻底去掉阴影 */
             display: block;
-            margin: 0 auto;
+        }
+
+        /* 决策树容器，用于抽屉动画 */
+        .tree-wrapper {
+            transition: transform 0.35s cubic-bezier(0.25, 0.8, 0.25, 1);
+            will-change: transform;
+        }
+
+        /* 抽屉打开时：树下移到下半屏 */
+        body.drawer-open .tree-wrapper {
+            transform: translateY(50vh);
+        }
+
+        body.drawer-open {
+            padding-top: 0;
         }
 
         .tree { 
@@ -345,8 +366,8 @@
 </head>
 <body>
 
-    <!-- 粘贴图片容器 -->
-    <div id="image-container" title="双击删除图片"></div>
+    <!-- 图片容器（上半部分） -->
+    <div id="image-container" title="点击关闭并恢复"></div>
 
     <div class="toggle-84" onclick="toggleRealms()" title="周期">84</div>
 
@@ -377,237 +398,289 @@
         </div>
     </div>
 
-    <div class="tree">
-        <div class="node-row has-children" id="root-node">
-            <div class="content-box">保护本金</div>
-            <div class="check-btn" onclick="toggleNode(this, false)">✔</div>
-            
-            <div class="children-wrapper">
-                <div class="node-group">
-                    
-                    <!-- 4h 静止 🧊 -->
-                    <div class="node-row">
-                        <div class="content-box">
-                            4h 静止 🧊
-                            <div class="reason-tag" id="r-ice"></div>
-                        </div>
-                        <div class="check-btn" onclick="toggleNode(this, true, 'r-ice')">✔</div>
+    <!-- 用 wrapper 包裹决策树，方便做下移动画 -->
+    <div class="tree-wrapper">
+        <div class="tree">
+            <div class="node-row has-children" id="root-node">
+                <div class="content-box">保护本金</div>
+                <div class="check-btn" onclick="toggleNode(this, false)">✔</div>
+                
+                <div class="children-wrapper">
+                    <div class="node-group">
                         
-                        <div class="children-wrapper">
-                            <div class="node-group">
-                                <!-- 1h -->
-                                <div class="node-row">
-                                    <div class="content-box">1h</div>
-                                    <div class="check-btn" onclick="toggleNode(this, false)">✔</div>
-                                    <div class="children-wrapper">
-                                        <div class="node-group">
-                                            <div class="node-row">
-                                                <div class="content-box">顶逆<div class="reason-tag" id="r-ice-1h-top"></div></div>
-                                                <div class="check-btn leaf-btn" onclick="selectLeaf(this, 'r-ice-1h-top')">✔</div>
-                                            </div>
-                                            <div class="node-row">
-                                                <div class="content-box">底逆<div class="reason-tag" id="r-ice-1h-bottom"></div></div>
-                                                <div class="check-btn leaf-btn" onclick="selectLeaf(this, 'r-ice-1h-bottom')">✔</div>
-                                            </div>
-                                            <div class="node-row">
-                                                <div class="content-box">冰转<div class="reason-tag" id="r-ice-1h-ice"></div></div>
-                                                <div class="check-btn leaf-btn" onclick="selectLeaf(this, 'r-ice-1h-ice')">✔</div>
-                                            </div>
-                                            <div class="node-row">
-                                                <div class="content-box">水转<div class="reason-tag" id="r-ice-1h-water"></div></div>
-                                                <div class="check-btn leaf-btn" onclick="selectLeaf(this, 'r-ice-1h-water')">✔</div>
-                                            </div>
-                                            <div class="node-row">
-                                                <div class="content-box">火转<div class="reason-tag" id="r-ice-1h-fire"></div></div>
-                                                <div class="check-btn leaf-btn" onclick="selectLeaf(this, 'r-ice-1h-fire')">✔</div>
+                        <!-- 4h 静止 🧊 -->
+                        <div class="node-row">
+                            <div class="content-box">
+                                4h 静止 🧊
+                                <div class="reason-tag" id="r-ice"></div>
+                            </div>
+                            <div class="check-btn" onclick="toggleNode(this, true, 'r-ice')">✔</div>
+                            
+                            <div class="children-wrapper">
+                                <div class="node-group">
+                                    <!-- 1h -->
+                                    <div class="node-row">
+                                        <div class="content-box">1h</div>
+                                        <div class="check-btn" onclick="toggleNode(this, false)">✔</div>
+                                        <div class="children-wrapper">
+                                            <div class="node-group">
+                                                <div class="node-row">
+                                                    <div class="content-box">顶逆<div class="reason-tag" id="r-ice-1h-top"></div></div>
+                                                    <div class="check-btn leaf-btn" onclick="selectLeaf(this, 'r-ice-1h-top')">✔</div>
+                                                </div>
+                                                <div class="node-row">
+                                                    <div class="content-box">底逆<div class="reason-tag" id="r-ice-1h-bottom"></div></div>
+                                                    <div class="check-btn leaf-btn" onclick="selectLeaf(this, 'r-ice-1h-bottom')">✔</div>
+                                                </div>
+                                                <div class="node-row">
+                                                    <div class="content-box">冰转<div class="reason-tag" id="r-ice-1h-ice"></div></div>
+                                                    <div class="check-btn leaf-btn" onclick="selectLeaf(this, 'r-ice-1h-ice')">✔</div>
+                                                </div>
+                                                <div class="node-row">
+                                                    <div class="content-box">水转<div class="reason-tag" id="r-ice-1h-water"></div></div>
+                                                    <div class="check-btn leaf-btn" onclick="selectLeaf(this, 'r-ice-1h-water')">✔</div>
+                                                </div>
+                                                <div class="node-row">
+                                                    <div class="content-box">火转<div class="reason-tag" id="r-ice-1h-fire"></div></div>
+                                                    <div class="check-btn leaf-btn" onclick="selectLeaf(this, 'r-ice-1h-fire')">✔</div>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-                                <!-- 30min -->
-                                <div class="node-row">
-                                    <div class="content-box">30min</div>
-                                    <div class="check-btn" onclick="toggleNode(this, false)">✔</div>
-                                    <div class="children-wrapper">
-                                        <div class="node-group">
-                                            <div class="node-row">
-                                                <div class="content-box">顶逆<div class="reason-tag" id="r-ice-30-top"></div></div>
-                                                <div class="check-btn leaf-btn" onclick="selectLeaf(this, 'r-ice-30-top')">✔</div>
-                                            </div>
-                                            <div class="node-row">
-                                                <div class="content-box">底逆<div class="reason-tag" id="r-ice-30-bottom"></div></div>
-                                                <div class="check-btn leaf-btn" onclick="selectLeaf(this, 'r-ice-30-bottom')">✔</div>
-                                            </div>
-                                            <div class="node-row">
-                                                <div class="content-box">冰转<div class="reason-tag" id="r-ice-30-ice"></div></div>
-                                                <div class="check-btn leaf-btn" onclick="selectLeaf(this, 'r-ice-30-ice')">✔</div>
-                                            </div>
-                                            <div class="node-row">
-                                                <div class="content-box">水转<div class="reason-tag" id="r-ice-30-water"></div></div>
-                                                <div class="check-btn leaf-btn" onclick="selectLeaf(this, 'r-ice-30-water')">✔</div>
-                                            </div>
-                                            <div class="node-row">
-                                                <div class="content-box">火转<div class="reason-tag" id="r-ice-30-fire"></div></div>
-                                                <div class="check-btn leaf-btn" onclick="selectLeaf(this, 'r-ice-30-fire')">✔</div>
+                                    <!-- 30min -->
+                                    <div class="node-row">
+                                        <div class="content-box">30min</div>
+                                        <div class="check-btn" onclick="toggleNode(this, false)">✔</div>
+                                        <div class="children-wrapper">
+                                            <div class="node-group">
+                                                <div class="node-row">
+                                                    <div class="content-box">顶逆<div class="reason-tag" id="r-ice-30-top"></div></div>
+                                                    <div class="check-btn leaf-btn" onclick="selectLeaf(this, 'r-ice-30-top')">✔</div>
+                                                </div>
+                                                <div class="node-row">
+                                                    <div class="content-box">底逆<div class="reason-tag" id="r-ice-30-bottom"></div></div>
+                                                    <div class="check-btn leaf-btn" onclick="selectLeaf(this, 'r-ice-30-bottom')">✔</div>
+                                                </div>
+                                                <div class="node-row">
+                                                    <div class="content-box">冰转<div class="reason-tag" id="r-ice-30-ice"></div></div>
+                                                    <div class="check-btn leaf-btn" onclick="selectLeaf(this, 'r-ice-30-ice')">✔</div>
+                                                </div>
+                                                <div class="node-row">
+                                                    <div class="content-box">水转<div class="reason-tag" id="r-ice-30-water"></div></div>
+                                                    <div class="check-btn leaf-btn" onclick="selectLeaf(this, 'r-ice-30-water')">✔</div>
+                                                </div>
+                                                <div class="node-row">
+                                                    <div class="content-box">火转<div class="reason-tag" id="r-ice-30-fire"></div></div>
+                                                    <div class="check-btn leaf-btn" onclick="selectLeaf(this, 'r-ice-30-fire')">✔</div>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
 
-                    <!-- 4h 减速 💧 -->
-                    <div class="node-row">
-                        <div class="content-box">
-                            4h 减速 💧
-                            <div class="reason-tag" id="r-water"></div>
-                        </div>
-                        <div class="check-btn" onclick="toggleNode(this, true, 'r-water')">✔</div>
+                        <!-- 4h 减速 💧 -->
+                        <div class="node-row">
+                            <div class="content-box">
+                                4h 减速 💧
+                                <div class="reason-tag" id="r-water"></div>
+                            </div>
+                            <div class="check-btn" onclick="toggleNode(this, true, 'r-water')">✔</div>
 
-                        <div class="children-wrapper">
-                            <div class="node-group">
-                                <!-- 1h -->
-                                <div class="node-row">
-                                    <div class="content-box">1h</div>
-                                    <div class="check-btn" onclick="toggleNode(this, false)">✔</div>
-                                    <div class="children-wrapper">
-                                        <div class="node-group">
-                                            <div class="node-row">
-                                                <div class="content-box">顶逆<div class="reason-tag" id="r-water-1h-top"></div></div>
-                                                <div class="check-btn leaf-btn" onclick="selectLeaf(this, 'r-water-1h-top')">✔</div>
-                                            </div>
-                                            <div class="node-row">
-                                                <div class="content-box">底逆<div class="reason-tag" id="r-water-1h-bottom"></div></div>
-                                                <div class="check-btn leaf-btn" onclick="selectLeaf(this, 'r-water-1h-bottom')">✔</div>
-                                            </div>
-                                            <div class="node-row">
-                                                <div class="content-box">冰转<div class="reason-tag" id="r-water-1h-ice"></div></div>
-                                                <div class="check-btn leaf-btn" onclick="selectLeaf(this, 'r-water-1h-ice')">✔</div>
-                                            </div>
-                                            <div class="node-row">
-                                                <div class="content-box">水转<div class="reason-tag" id="r-water-1h-water"></div></div>
-                                                <div class="check-btn leaf-btn" onclick="selectLeaf(this, 'r-water-1h-water')">✔</div>
-                                            </div>
-                                            <div class="node-row">
-                                                <div class="content-box">火转<div class="reason-tag" id="r-water-1h-fire"></div></div>
-                                                <div class="check-btn leaf-btn" onclick="selectLeaf(this, 'r-water-1h-fire')">✔</div>
+                            <div class="children-wrapper">
+                                <div class="node-group">
+                                    <!-- 1h -->
+                                    <div class="node-row">
+                                        <div class="content-box">1h</div>
+                                        <div class="check-btn" onclick="toggleNode(this, false)">✔</div>
+                                        <div class="children-wrapper">
+                                            <div class="node-group">
+                                                <div class="node-row">
+                                                    <div class="content-box">顶逆<div class="reason-tag" id="r-water-1h-top"></div></div>
+                                                    <div class="check-btn leaf-btn" onclick="selectLeaf(this, 'r-water-1h-top')">✔</div>
+                                                </div>
+                                                <div class="node-row">
+                                                    <div class="content-box">底逆<div class="reason-tag" id="r-water-1h-bottom"></div></div>
+                                                    <div class="check-btn leaf-btn" onclick="selectLeaf(this, 'r-water-1h-bottom')">✔</div>
+                                                </div>
+                                                <div class="node-row">
+                                                    <div class="content-box">冰转<div class="reason-tag" id="r-water-1h-ice"></div></div>
+                                                    <div class="check-btn leaf-btn" onclick="selectLeaf(this, 'r-water-1h-ice')">✔</div>
+                                                </div>
+                                                <div class="node-row">
+                                                    <div class="content-box">水转<div class="reason-tag" id="r-water-1h-water"></div></div>
+                                                    <div class="check-btn leaf-btn" onclick="selectLeaf(this, 'r-water-1h-water')">✔</div>
+                                                </div>
+                                                <div class="node-row">
+                                                    <div class="content-box">火转<div class="reason-tag" id="r-water-1h-fire"></div></div>
+                                                    <div class="check-btn leaf-btn" onclick="selectLeaf(this, 'r-water-1h-fire')">✔</div>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-                                <!-- 30min -->
-                                <div class="node-row">
-                                    <div class="content-box">30min</div>
-                                    <div class="check-btn" onclick="toggleNode(this, false)">✔</div>
-                                    <div class="children-wrapper">
-                                        <div class="node-group">
-                                            <div class="node-row">
-                                                <div class="content-box">顶逆<div class="reason-tag" id="r-water-30-top"></div></div>
-                                                <div class="check-btn leaf-btn" onclick="selectLeaf(this, 'r-water-30-top')">✔</div>
-                                            </div>
-                                            <div class="node-row">
-                                                <div class="content-box">底逆<div class="reason-tag" id="r-water-30-bottom"></div></div>
-                                                <div class="check-btn leaf-btn" onclick="selectLeaf(this, 'r-water-30-bottom')">✔</div>
-                                            </div>
-                                            <div class="node-row">
-                                                <div class="content-box">冰转<div class="reason-tag" id="r-water-30-ice"></div></div>
-                                                <div class="check-btn leaf-btn" onclick="selectLeaf(this, 'r-water-30-ice')">✔</div>
-                                            </div>
-                                            <div class="node-row">
-                                                <div class="content-box">水转<div class="reason-tag" id="r-water-30-water"></div></div>
-                                                <div class="check-btn leaf-btn" onclick="selectLeaf(this, 'r-water-30-water')">✔</div>
-                                            </div>
-                                            <div class="node-row">
-                                                <div class="content-box">火转<div class="reason-tag" id="r-water-30-fire"></div></div>
-                                                <div class="check-btn leaf-btn" onclick="selectLeaf(this, 'r-water-30-fire')">✔</div>
+                                    <!-- 30min -->
+                                    <div class="node-row">
+                                        <div class="content-box">30min</div>
+                                        <div class="check-btn" onclick="toggleNode(this, false)">✔</div>
+                                        <div class="children-wrapper">
+                                            <div class="node-group">
+                                                <div class="node-row">
+                                                    <div class="content-box">顶逆<div class="reason-tag" id="r-water-30-top"></div></div>
+                                                    <div class="check-btn leaf-btn" onclick="selectLeaf(this, 'r-water-30-top')">✔</div>
+                                                </div>
+                                                <div class="node-row">
+                                                    <div class="content-box">底逆<div class="reason-tag" id="r-water-30-bottom"></div></div>
+                                                    <div class="check-btn leaf-btn" onclick="selectLeaf(this, 'r-water-30-bottom')">✔</div>
+                                                </div>
+                                                <div class="node-row">
+                                                    <div class="content-box">冰转<div class="reason-tag" id="r-water-30-ice"></div></div>
+                                                    <div class="check-btn leaf-btn" onclick="selectLeaf(this, 'r-water-30-ice')">✔</div>
+                                                </div>
+                                                <div class="node-row">
+                                                    <div class="content-box">水转<div class="reason-tag" id="r-water-30-water"></div></div>
+                                                    <div class="check-btn leaf-btn" onclick="selectLeaf(this, 'r-water-30-water')">✔</div>
+                                                </div>
+                                                <div class="node-row">
+                                                    <div class="content-box">火转<div class="reason-tag" id="r-water-30-fire"></div></div>
+                                                    <div class="check-btn leaf-btn" onclick="selectLeaf(this, 'r-water-30-fire')">✔</div>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
 
-                    <!-- 4h 加速 🔥 -->
-                    <div class="node-row">
-                        <div class="content-box">
-                            4h 加速 🔥
-                            <div class="reason-tag" id="r-fire"></div>
-                        </div>
-                        <div class="check-btn" onclick="toggleNode(this, true, 'r-fire')">✔</div>
+                        <!-- 4h 加速 🔥 -->
+                        <div class="node-row">
+                            <div class="content-box">
+                                4h 加速 🔥
+                                <div class="reason-tag" id="r-fire"></div>
+                            </div>
+                            <div class="check-btn" onclick="toggleNode(this, true, 'r-fire')">✔</div>
 
-                        <div class="children-wrapper">
-                            <div class="node-group">
-                                <!-- 1h -->
-                                <div class="node-row">
-                                    <div class="content-box">1h</div>
-                                    <div class="check-btn" onclick="toggleNode(this, false)">✔</div>
-                                    <div class="children-wrapper">
-                                        <div class="node-group">
-                                            <div class="node-row">
-                                                <div class="content-box">顶逆<div class="reason-tag" id="r-fire-1h-top"></div></div>
-                                                <div class="check-btn leaf-btn" onclick="selectLeaf(this, 'r-fire-1h-top')">✔</div>
-                                            </div>
-                                            <div class="node-row">
-                                                <div class="content-box">底逆<div class="reason-tag" id="r-fire-1h-bottom"></div></div>
-                                                <div class="check-btn leaf-btn" onclick="selectLeaf(this, 'r-fire-1h-bottom')">✔</div>
-                                            </div>
-                                            <div class="node-row">
-                                                <div class="content-box">冰转<div class="reason-tag" id="r-fire-1h-ice"></div></div>
-                                                <div class="check-btn leaf-btn" onclick="selectLeaf(this, 'r-fire-1h-ice')">✔</div>
-                                            </div>
-                                            <div class="node-row">
-                                                <div class="content-box">水转<div class="reason-tag" id="r-fire-1h-water"></div></div>
-                                                <div class="check-btn leaf-btn" onclick="selectLeaf(this, 'r-fire-1h-water')">✔</div>
-                                            </div>
-                                            <div class="node-row">
-                                                <div class="content-box">火转<div class="reason-tag" id="r-fire-1h-fire"></div></div>
-                                                <div class="check-btn leaf-btn" onclick="selectLeaf(this, 'r-fire-1h-fire')">✔</div>
+                            <div class="children-wrapper">
+                                <div class="node-group">
+                                    <!-- 1h -->
+                                    <div class="node-row">
+                                        <div class="content-box">1h</div>
+                                        <div class="check-btn" onclick="toggleNode(this, false)">✔</div>
+                                        <div class="children-wrapper">
+                                            <div class="node-group">
+                                                <div class="node-row">
+                                                    <div class="content-box">顶逆<div class="reason-tag" id="r-fire-1h-top"></div></div>
+                                                    <div class="check-btn leaf-btn" onclick="selectLeaf(this, 'r-fire-1h-top')">✔</div>
+                                                </div>
+                                                <div class="node-row">
+                                                    <div class="content-box">底逆<div class="reason-tag" id="r-fire-1h-bottom"></div></div>
+                                                    <div class="check-btn leaf-btn" onclick="selectLeaf(this, 'r-fire-1h-bottom')">✔</div>
+                                                </div>
+                                                <div class="node-row">
+                                                    <div class="content-box">冰转<div class="reason-tag" id="r-fire-1h-ice"></div></div>
+                                                    <div class="check-btn leaf-btn" onclick="selectLeaf(this, 'r-fire-1h-ice')">✔</div>
+                                                </div>
+                                                <div class="node-row">
+                                                    <div class="content-box">水转<div class="reason-tag" id="r-fire-1h-water"></div></div>
+                                                    <div class="check-btn leaf-btn" onclick="selectLeaf(this, 'r-fire-1h-water')">✔</div>
+                                                </div>
+                                                <div class="node-row">
+                                                    <div class="content-box">火转<div class="reason-tag" id="r-fire-1h-fire"></div></div>
+                                                    <div class="check-btn leaf-btn" onclick="selectLeaf(this, 'r-fire-1h-fire')">✔</div>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-                                <!-- 30min -->
-                                <div class="node-row">
-                                    <div class="content-box">30min</div>
-                                    <div class="check-btn" onclick="toggleNode(this, false)">✔</div>
-                                    <div class="children-wrapper">
-                                        <div class="node-group">
-                                            <div class="node-row">
-                                                <div class="content-box">顶逆<div class="reason-tag" id="r-fire-30-top"></div></div>
-                                                <div class="check-btn leaf-btn" onclick="selectLeaf(this, 'r-fire-30-top')">✔</div>
-                                            </div>
-                                            <div class="node-row">
-                                                <div class="content-box">底逆<div class="reason-tag" id="r-fire-30-bottom"></div></div>
-                                                <div class="check-btn leaf-btn" onclick="selectLeaf(this, 'r-fire-30-bottom')">✔</div>
-                                            </div>
-                                            <div class="node-row">
-                                                <div class="content-box">冰转<div class="reason-tag" id="r-fire-30-ice"></div></div>
-                                                <div class="check-btn leaf-btn" onclick="selectLeaf(this, 'r-fire-30-ice')">✔</div>
-                                            </div>
-                                            <div class="node-row">
-                                                <div class="content-box">水转<div class="reason-tag" id="r-fire-30-water"></div></div>
-                                                <div class="check-btn leaf-btn" onclick="selectLeaf(this, 'r-fire-30-water')">✔</div>
-                                            </div>
-                                            <div class="node-row">
-                                                <div class="content-box">火转<div class="reason-tag" id="r-fire-30-fire"></div></div>
-                                                <div class="check-btn leaf-btn" onclick="selectLeaf(this, 'r-fire-30-fire')">✔</div>
+                                    <!-- 30min -->
+                                    <div class="node-row">
+                                        <div class="content-box">30min</div>
+                                        <div class="check-btn" onclick="toggleNode(this, false)">✔</div>
+                                        <div class="children-wrapper">
+                                            <div class="node-group">
+                                                <div class="node-row">
+                                                    <div class="content-box">顶逆<div class="reason-tag" id="r-fire-30-top"></div></div>
+                                                    <div class="check-btn leaf-btn" onclick="selectLeaf(this, 'r-fire-30-top')">✔</div>
+                                                </div>
+                                                <div class="node-row">
+                                                    <div class="content-box">底逆<div class="reason-tag" id="r-fire-30-bottom"></div></div>
+                                                    <div class="check-btn leaf-btn" onclick="selectLeaf(this, 'r-fire-30-bottom')">✔</div>
+                                                </div>
+                                                <div class="node-row">
+                                                    <div class="content-box">冰转<div class="reason-tag" id="r-fire-30-ice"></div></div>
+                                                    <div class="check-btn leaf-btn" onclick="selectLeaf(this, 'r-fire-30-ice')">✔</div>
+                                                </div>
+                                                <div class="node-row">
+                                                    <div class="content-box">水转<div class="reason-tag" id="r-fire-30-water"></div></div>
+                                                    <div class="check-btn leaf-btn" onclick="selectLeaf(this, 'r-fire-30-water')">✔</div>
+                                                </div>
+                                                <div class="node-row">
+                                                    <div class="content-box">火转<div class="reason-tag" id="r-fire-30-fire"></div></div>
+                                                    <div class="check-btn leaf-btn" onclick="selectLeaf(this, 'r-fire-30-fire')">✔</div>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
 
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        // ========== 粘贴图片功能 ==========
+        // ========== 抽屉状态 ==========
+        let isDrawerOpen = false;
+        let hasImage = false;
+
+        function openDrawer() {
+            document.body.classList.add('drawer-open');
+            isDrawerOpen = true;
+        }
+
+        function closeDrawer() {
+            document.body.classList.remove('drawer-open');
+            isDrawerOpen = false;
+            // 同时清空图片
+            clearImage();
+        }
+
+        function clearImage() {
+            const container = document.getElementById('image-container');
+            const img = container.querySelector('img');
+            if (img && img.src.startsWith('blob:')) {
+                URL.revokeObjectURL(img.src);
+            }
+            container.innerHTML = '';
+            container.style.display = 'none';
+            hasImage = false;
+        }
+
+        // 显示图片并强制打开抽屉
+        function showImage(url) {
+            const container = document.getElementById('image-container');
+            let img = container.querySelector('img');
+            
+            if (!img) {
+                img = document.createElement('img');
+                container.appendChild(img);
+            } else {
+                if (img.src.startsWith('blob:')) {
+                    URL.revokeObjectURL(img.src);
+                }
+            }
+            
+            img.src = url;
+            img.onload = function() {
+                container.style.display = 'flex';
+                hasImage = true;
+                openDrawer();          // 图片进来就自动下移树
+            };
+        }
+
+        // ========== 粘贴图片 ==========
         document.addEventListener('paste', function(e) {
             const items = (e.clipboardData || e.originalEvent.clipboardData).items;
             for (let i = 0; i < items.length; i++) {
@@ -615,41 +688,49 @@
                     e.preventDefault();
                     const blob = items[i].getAsFile();
                     const url = URL.createObjectURL(blob);
-                    
-                    const container = document.getElementById('image-container');
-                    let img = container.querySelector('img');
-                    
-                    if (!img) {
-                        img = document.createElement('img');
-                        container.appendChild(img);
-                    } else {
-                        if (img.src.startsWith('blob:')) {
-                            URL.revokeObjectURL(img.src);
-                        }
-                    }
-                    
-                    img.src = url;
-                    img.onload = function() {
-                        container.style.display = 'block';
-                        const tree = document.querySelector('.tree');
-                        const extraSpace = 50;
-                        tree.style.marginTop = (img.offsetHeight + extraSpace) + 'px';
-                    };
+                    showImage(url);
                     break;
                 }
             }
         });
 
-        // 双击删除图片
-        document.getElementById('image-container').addEventListener('dblclick', function() {
-            const container = this;
-            const img = container.querySelector('img');
-            if (img && img.src.startsWith('blob:')) {
-                URL.revokeObjectURL(img.src);
+        // ========== 拖拽图片 ==========
+        document.addEventListener('dragover', function(e) {
+            e.preventDefault();
+        });
+
+        document.addEventListener('drop', function(e) {
+            e.preventDefault();
+            const files = e.dataTransfer.files;
+            if (files.length > 0 && files[0].type.startsWith('image/')) {
+                const url = URL.createObjectURL(files[0]);
+                showImage(url);
             }
-            container.innerHTML = '';
-            container.style.display = 'none';
-            document.querySelector('.tree').style.marginTop = '0px';
+        });
+
+        // ========== 双击切换抽屉 ==========
+        document.addEventListener('dblclick', function(e) {
+            // 避免点到按钮、输入框等控件时触发
+            if (e.target.closest('.check-btn') || 
+                e.target.closest('.theme-switch') || 
+                e.target.closest('.toggle-84') || 
+                e.target.closest('.realm-card') ||
+                e.target.closest('.modal-overlay') ||
+                e.target.tagName === 'INPUT' ||
+                e.target.tagName === 'BUTTON') {
+                return;
+            }
+
+            if (isDrawerOpen) {
+                closeDrawer();           // 拉回 + 图片消失
+            } else {
+                openDrawer();            // 只是下移一半（预留空间）
+            }
+        });
+
+        // 点击图片区域也可以关闭
+        document.getElementById('image-container').addEventListener('click', function() {
+            closeDrawer();
         });
 
         // ========== 原有截图功能 ==========
