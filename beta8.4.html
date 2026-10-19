@@ -4,10 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>Little Green Bottle</title>
-    <link rel="icon" href="https://tungziyi.github.io/TungZiyii/apple-touch-icon.png?v=eris-2" type="image/png">
+    <link rel="icon" href="./apple-touch-icon.png" type="image/png">
     <!-- iPhone 主屏幕：直接使用仓库中已确认的艾莉丝 PNG -->
-    <link rel="apple-touch-icon" href="https://tungziyi.github.io/TungZiyii/apple-touch-icon.png?v=eris-2">
-    <link rel="apple-touch-icon-precomposed" sizes="180x180" href="https://tungziyi.github.io/TungZiyii/apple-touch-icon.png?v=eris-2">
+    <link rel="apple-touch-icon" href="./apple-touch-icon.png">
+    <link rel="apple-touch-icon-precomposed" sizes="180x180" href="./apple-touch-icon.png">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="小绿瓶">
@@ -312,6 +312,10 @@ body.iphone-pop-open #reason-pop { visibility:visible; pointer-events:auto; }
 body.iphone-pop-open .content-box:not(.iphone-pop-path),
 body.iphone-pop-open .reason-tag:not(.iphone-pop-path-tag) { visibility:hidden !important; }
 body.iphone-pop-open .tree { left:50% !important; }
+
+
+/* 整棵树上移一个节点层级：50px 节点高度 + 25px 层间距。 */
+.tree { bottom:calc(env(safe-area-inset-bottom, 0px) + 137px); }
 
 </style>
 </head>
@@ -860,8 +864,10 @@ body.iphone-pop-open .tree { left:50% !important; }
         const popInput = document.getElementById('reason-input');
 
         let popViewportHeight = innerHeight;
+        let reasonKeyboardWasOpen = false;
         // 节点同尺寸输入框；键盘打开时停靠于可视区域底部。
         function openInputModal(callback, placeholder, anchor) {
+            reasonKeyboardWasOpen = false;
             popViewportHeight = Math.max(innerHeight, window.visualViewport ? window.visualViewport.height : 0);
             pendingCallback = callback;
             popAnchor = anchor || null;
@@ -1041,7 +1047,19 @@ body.iphone-pop-open .tree { left:50% !important; }
             positionPop();
         }
         if (window.visualViewport) {
-            window.visualViewport.addEventListener('resize', fitPop);
+            window.visualViewport.addEventListener('resize', () => {
+                if (pop.classList.contains('show')) {
+                    const keyboardOpen = popViewportHeight - window.visualViewport.height > 100;
+                    if (keyboardOpen) {
+                        reasonKeyboardWasOpen = true;
+                        document.body.classList.add('iphone-input-focused');
+                    } else if (reasonKeyboardWasOpen) {
+                        reasonKeyboardWasOpen = false;
+                        document.body.classList.remove('iphone-input-focused');
+                    }
+                }
+                fitPop();
+            });
             window.visualViewport.addEventListener('scroll', positionPop);
         }
         popInput.addEventListener('focus', () => {
@@ -1093,6 +1111,7 @@ body.iphone-pop-open .tree { left:50% !important; }
         }, { passive:false });
         // 键盘上的“完成”通常使输入框失焦；与回车共用确认逻辑。
         popInput.addEventListener('blur', () => {
+            document.body.classList.remove('iphone-input-focused');
             setTimeout(() => {
                 if (pop.classList.contains('show') && pendingCallback && popInput.value.trim() && document.activeElement !== popInput) confirmPop();
             }, 0);
