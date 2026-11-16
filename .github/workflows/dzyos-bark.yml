@@ -1,0 +1,74 @@
+
+name: DZYOS 30min Bark
+
+on:
+  schedule:
+    - cron: "2,32 * * * *"
+  workflow_dispatch:
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send close alert
+        env:
+          BARK_KEY: ${{ secrets.BARK_KEY }}
+        run: |
+          python3 - <<'PY'
+          import os, json, time, urllib.request
+          from datetime import datetime, timezone, timedelta
+
+          key = os.environ.get("BARK_KEY")
+          if not key:
+              raise SystemExit("Missing BARK_KEY")
+
+          data = {}
+          for symbol in ("BTCUSDT", "XAUUSDT"):
+              url = (
+                  "https://fapi.binance.com/fapi/v1/klines"
+                  f"?symbol={symbol}&interval=30m&limit=3"
+              )
+              with urllib.request.urlopen(url, timeout=15) as r:
+                  candles = json.load(r)
+
+              now = int(time.time() * 1000)
+              closed = [c for c in candles if int(c[6]) < now]
+              if not closed:
+                  raise SystemExit(f"No closed candle: {symbol}")
+
+              candle = closed[-1]
+              if now - int(candle[6]) > 45 * 60 * 1000:
+                  raise SystemExit("Stale quote")
+
+              data[symbol] = (float(candle[4]), int(candle[6]))
+
+          if data["BTCUSDT"][1] != data["XAUUSDT"][1]:
+              raise SystemExit("Candle timestamps differ")
+
+          bj = timezone(timedelta(hours=8))
+          close_ms = data["BTCUSDT"][1]
+          when = datetime.fromtimestamp(
+              (close_ms + 1) / 1000, tz=timezone.utc
+          ).astimezone(bj)
+
+          payload = {
+              "device_key": key,
+              "title": f"BTCUSDT ${data['BTCUSDT'][0]:,.2f}",
+              "body": (
+                  f"XAUUSDT ${data['XAUUSDT'][0]:,.2f}\n"
+                  f"30min 收盘｜{when:%H:%M}"
+              ),
+              "group": "DZYOS"
+          }
+
+          req = urllib.request.Request(
+              "https://api.day.app/push",
+              data=json.dumps(payload).encode(),
+              headers={"Content-Type": "application/json"},
+              method="POST"
+          )
+          with urllib.request.urlopen(req, timeout=15) as r:
+              result = json.load(r)
+          if result.get("code") != 200:
+              raise SystemExit("Bark rejected notification")
+          PY
