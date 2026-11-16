@@ -1,74 +1,149 @@
 
-name: DZYOS 30min Bark
+name: DZYOS 30分钟收盘
 
 on:
   schedule:
     - cron: "2,32 * * * *"
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   notify:
     runs-on: ubuntu-latest
+    timeout-minutes: 3
+
     steps:
       - name: Send close alert
         env:
           BARK_KEY: ${{ secrets.BARK_KEY }}
+
         run: |
           python3 - <<'PY'
-          import os, json, time, urllib.request
+          import os
+          import json
+          import time
+          import urllib.request
           from datetime import datetime, timezone, timedelta
 
+          # Bark 密钥
           key = os.environ.get("BARK_KEY")
+
           if not key:
               raise SystemExit("Missing BARK_KEY")
 
+          # OKX USDT 永续合约
+          symbols = {
+              "BTCUSDT": "BTC-USDT-SWAP",
+              "XAUUSDT": "XAU-USDT-SWAP"
+          }
+
           data = {}
-          for symbol in ("BTCUSDT", "XAUUSDT"):
+          now = int(time.time() * 1000)
+
+          # 获取30分钟K线收盘价
+          for symbol, inst in symbols.items():
+
               url = (
-                  "https://fapi.binance.com/fapi/v1/klines"
-                  f"?symbol={symbol}&interval=30m&limit=3"
+                  "https://www.okx.com/api/v5/market/candles"
+                  f"?instId={inst}&bar=30m&limit=5"
               )
-              with urllib.request.urlopen(url, timeout=15) as r:
-                  candles = json.load(r)
 
-              now = int(time.time() * 1000)
-              closed = [c for c in candles if int(c[6]) < now]
+              req = urllib.request.Request(
+                  url,
+                  headers={
+                      "User-Agent": "Mozilla/5.0",
+                      "Accept": "application/json"
+                  }
+              )
+
+              with urllib.request.urlopen(req, timeout=15) as r:
+                  result = json.load(r)
+
+              if result.get("code") != "0":
+                  raise SystemExit(
+                      f"OKX API failed: {symbol}"
+                  )
+
+              # 只使用已经确认收盘的K线
+              closed = [
+                  c for c in result["data"]
+                  if len(c) >= 9 and c[8] == "1"
+              ]
+
               if not closed:
-                  raise SystemExit(f"No closed candle: {symbol}")
+                  raise SystemExit(
+                      f"No closed candle: {symbol}"
+                  )
 
-              candle = closed[-1]
-              if now - int(candle[6]) > 45 * 60 * 1000:
-                  raise SystemExit("Stale quote")
+              candle = max(
+                  closed,
+                  key=lambda c: int(c[0])
+              )
 
-              data[symbol] = (float(candle[4]), int(candle[6]))
+              price = float(candle[4])
+              close_ms = int(candle[0]) + 1800000
 
-          if data["BTCUSDT"][1] != data["XAUUSDT"][1]:
-              raise SystemExit("Candle timestamps differ")
+              # 避免使用过期行情
+              if now - close_ms > 2700000:
+                  raise SystemExit(
+                      f"Stale quote: {symbol}"
+                  )
 
+              data[symbol] = (price, close_ms)
+
+          # 确认两种资产对应同一收盘时间
+          btc_time = data["BTCUSDT"][1]
+          xau_time = data["XAUUSDT"][1]
+
+          if btc_time != xau_time:
+              raise SystemExit(
+                  "Candle closing times differ"
+              )
+
+          # 转换北京时间
           bj = timezone(timedelta(hours=8))
-          close_ms = data["BTCUSDT"][1]
-          when = datetime.fromtimestamp(
-              (close_ms + 1) / 1000, tz=timezone.utc
+
+          close_time = datetime.fromtimestamp(
+              btc_time / 1000,
+              tz=timezone.utc
           ).astimezone(bj)
+
+          btc = data["BTCUSDT"][0]
+          xau = data["XAUUSDT"][0]
+
+          # 极简 Bark 通知
+          title = f"BTCUSDT {btc:,.2f}"
+
+          body = (
+              f"XAUUSDT {xau:,.2f}\n"
+              f"30min 收盘｜{close_time:%H:%M}"
+          )
 
           payload = {
               "device_key": key,
-              "title": f"BTCUSDT ${data['BTCUSDT'][0]:,.2f}",
-              "body": (
-                  f"XAUUSDT ${data['XAUUSDT'][0]:,.2f}\n"
-                  f"30min 收盘｜{when:%H:%M}"
-              ),
-              "group": "DZYOS"
+              "title": title,
+              "body": body,
+              "group": "DZYOS",
+              "sound": "minuet"
           }
 
           req = urllib.request.Request(
               "https://api.day.app/push",
-              data=json.dumps(payload).encode(),
-              headers={"Content-Type": "application/json"},
+              data=json.dumps(payload).encode("utf-8"),
+              headers={
+                  "Content-Type": "application/json"
+              },
               method="POST"
           )
+
           with urllib.request.urlopen(req, timeout=15) as r:
-              result = json.load(r)
-          if result.get("code") != 200:
-              raise SystemExit("Bark rejected notification")
+              response = json.load(r)
+
+          if response.get("code") != 200:
+              raise SystemExit("Bark push failed")
+
+          print("DZYOS notification sent successfully")
+
           PY
