@@ -25,34 +25,32 @@ jobs:
           import json
           import time
           import urllib.request
+          import urllib.parse
           from decimal import Decimal
           from datetime import datetime, timezone, timedelta
 
-          # ==========================
-          # DZYOS 基础配置
-          # ==========================
-
+          # 基础配置
           BARK_KEY = os.environ.get("BARK_KEY")
-
-          if not BARK_KEY:
-              raise RuntimeError("BARK_KEY 未配置")
-
           BEIJING = timezone(timedelta(hours=8))
 
-          BINANCE_API = (
-              "https://fapi.binance.com"
-              "/fapi/v2/ticker/price"
+          OKX_API = (
+              "https://www.okx.com"
+              "/api/v5/market/ticker"
           )
 
           BARK_API = "https://api.day.app/push"
 
-          # ==========================
-          # 获取币安U本位合约最新成交价
-          # ==========================
+          if not BARK_KEY:
+              raise RuntimeError("BARK_KEY 未配置")
 
+          # 获取OKX永续合约最新成交价
           def get_price(symbol):
 
-              url = f"{BINANCE_API}?symbol={symbol}"
+              params = urllib.parse.urlencode({
+                  "instId": symbol
+              })
+
+              url = f"{OKX_API}?{params}"
 
               request = urllib.request.Request(
                   url,
@@ -63,18 +61,31 @@ jobs:
               )
 
               with urllib.request.urlopen(
-                  request,
-                  timeout=15
+                  request, timeout=15
               ) as response:
-                  data = json.load(response)
+                  result = json.load(response)
 
-              if data.get("symbol") != symbol:
+              if result.get("code") != "0":
                   raise RuntimeError(
-                      f"{symbol} 交易对异常"
+                      f"{symbol} API错误: {result}"
                   )
 
-              price = Decimal(data["price"])
-              quote_time = int(data["time"])
+              data = result.get("data", [])
+
+              if not data:
+                  raise RuntimeError(
+                      f"{symbol} 无行情数据"
+                  )
+
+              ticker = data[0]
+
+              if ticker.get("instId") != symbol:
+                  raise RuntimeError(
+                      f"{symbol} 合约不匹配"
+                  )
+
+              price = Decimal(ticker["last"])
+              quote_time = int(ticker["ts"])
 
               if price <= 0:
                   raise RuntimeError(
@@ -82,13 +93,12 @@ jobs:
                   )
 
               now_ms = int(time.time() * 1000)
-
               delay = now_ms - quote_time
 
-              # 不使用超过120秒的旧报价
+              # 拒绝超过120秒的旧报价
               if not 0 <= delay <= 120000:
                   raise RuntimeError(
-                      f"{symbol} 报价已过期"
+                      f"{symbol} 报价过期: {delay}ms"
                   )
 
               print(
@@ -98,33 +108,20 @@ jobs:
 
               return int(price)
 
-          # ==========================
-          # 获取最新行情
-          # ==========================
+          # 最新成交价
+          btc = get_price("BTC-USDT-SWAP")
+          xau = get_price("XAU-USDT-SWAP")
 
-          btc = get_price("BTCUSDT")
-          xau = get_price("XAUUSDT")
-
-          # ==========================
           # 北京时间
-          # ==========================
-
           now = datetime.now(BEIJING)
 
-          # ==========================
-          # DZYOS 通知格式
-          # ==========================
-
+          # Bark 极简通知格式
           title = f"DZYOS {now:%H:%M}"
 
           body = (
               f"BTCUSDT {btc}\n"
               f"XAUUSDT {xau}"
           )
-
-          # ==========================
-          # Bark 推送
-          # ==========================
 
           payload = {
               "device_key": BARK_KEY,
@@ -147,17 +144,16 @@ jobs:
           )
 
           with urllib.request.urlopen(
-              request,
-              timeout=15
+              request, timeout=15
           ) as response:
               result = json.load(response)
 
           if result.get("code") != 200:
               raise RuntimeError(
-                  f"Bark 推送失败: {result}"
+                  f"Bark推送失败: {result}"
               )
 
-          print("DZYOS Bark 推送成功")
+          print("DZYOS 推送成功")
           print(title)
           print(body)
 
