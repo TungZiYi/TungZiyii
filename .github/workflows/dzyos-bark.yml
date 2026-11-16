@@ -15,7 +15,7 @@ jobs:
     timeout-minutes: 3
 
     steps:
-      - name: Send close alert
+      - name: Send DZYOS Alert
         env:
           BARK_KEY: ${{ secrets.BARK_KEY }}
 
@@ -35,8 +35,8 @@ jobs:
 
           # OKX USDT 永续合约
           symbols = {
-              "BTCUSDT": "BTC-USDT-SWAP",
-              "XAUUSDT": "XAU-USDT-SWAP"
+              "XAUUSDT": "XAU-USDT-SWAP",
+              "BTCUSDT": "BTC-USDT-SWAP"
           }
 
           data = {}
@@ -66,7 +66,7 @@ jobs:
                       f"OKX API failed: {symbol}"
                   )
 
-              # 只使用已经确认收盘的K线
+              # 只读取确认收盘的K线
               closed = [
                   c for c in result["data"]
                   if len(c) >= 9 and c[8] == "1"
@@ -85,7 +85,7 @@ jobs:
               price = float(candle[4])
               close_ms = int(candle[0]) + 1800000
 
-              # 避免使用过期行情
+              # 防止使用过期价格
               if now - close_ms > 2700000:
                   raise SystemExit(
                       f"Stale quote: {symbol}"
@@ -93,34 +93,36 @@ jobs:
 
               data[symbol] = (price, close_ms)
 
-          # 确认两种资产对应同一收盘时间
-          btc_time = data["BTCUSDT"][1]
+          # 检查两个品种收盘时间一致
           xau_time = data["XAUUSDT"][1]
+          btc_time = data["BTCUSDT"][1]
 
-          if btc_time != xau_time:
+          if xau_time != btc_time:
               raise SystemExit(
                   "Candle closing times differ"
               )
 
-          # 转换北京时间
+          # 北京时间 UTC+8
           bj = timezone(timedelta(hours=8))
 
           close_time = datetime.fromtimestamp(
-              btc_time / 1000,
+              xau_time / 1000,
               tz=timezone.utc
           ).astimezone(bj)
 
-          btc = data["BTCUSDT"][0]
-          xau = data["XAUUSDT"][0]
+          # 获取价格
+          xau = int(data["XAUUSDT"][0])
+          btc = int(data["BTCUSDT"][0])
 
-          # 极简 Bark 通知
-          title = f"BTCUSDT {btc:,.2f}"
+          # 极简通知
+          title = f"DZYOS {close_time:%H:%M}"
 
           body = (
-              f"XAUUSDT {xau:,.2f}\n"
-              f"30min 收盘｜{close_time:%H:%M}"
+              f"XAUUSDT {xau}\n"
+              f"BTCUSDT {btc}"
           )
 
+          # Bark 推送设置
           payload = {
               "device_key": key,
               "title": title,
@@ -131,7 +133,10 @@ jobs:
 
           req = urllib.request.Request(
               "https://api.day.app/push",
-              data=json.dumps(payload).encode("utf-8"),
+              data=json.dumps(
+                  payload,
+                  ensure_ascii=False
+              ).encode("utf-8"),
               headers={
                   "Content-Type": "application/json"
               },
